@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <Servo.h>
 //Cloning from WorkingPIRv1 since the servo layout is the same
-//test2
+
 // Define servo objects
   Servo verticalServo;
   Servo horizontalServo;
