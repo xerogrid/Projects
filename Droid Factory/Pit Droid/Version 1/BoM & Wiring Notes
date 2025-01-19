@@ -1,0 +1,31 @@
+Arduino Nano
+Meanwell LRS-50-5 Power Supply
+120VAC Power Lead (any generic brand will do)
+HC-SR501 PIR Motion Sensor (mine are DIYMall)
+MG996R Servos (two)
+
+
+Vertical Servo
+Pin D9
+Yellow Wire
+
+Horizontal Servo
+Pin D10
+Green Wire
+
+Motion Sensor
+Pin D2
+Blue Wire
+
+Red LED 
+Pin D3
+330 ohm resistor
+
+Blue LED
+Pin D4
+330 ohm resistor
+
+WAGO Lever Connectors from Left ---> Right
+[LED GND] -- [PIR 5V] -- [Servos 5V] -- [Arduino 5V] -- [DC5V in (from PSU)]
+
+
