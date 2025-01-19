@@ -1,6 +1,8 @@
 #include <Arduino.h>
 #include <Servo.h>
 
+//Project is built on Arduino Nano ATMEGA328 (not the new version)
+
 Servo servo1;
 Servo servo2;
 

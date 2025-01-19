@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <Servo.h>
 //Cloning from WorkingPIRv1 since the servo layout is the same
+//Project is built on Arduino Nano ATMEGA328 (not the new version)
 
 // Define servo objects
   Servo verticalServo;
