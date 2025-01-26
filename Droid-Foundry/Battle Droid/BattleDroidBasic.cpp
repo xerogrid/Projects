@@ -2,27 +2,34 @@
 #include <Servo.h>
 
 //Project is built on Arduino Nano ATMEGA328 (not the new version)
+//Mount Servos
+//Wiggle both servos, then home them
+//Invesitgate motion trigger mechanisms in lieu of PIR sensors
+//Determine if LEDs will be used
+//Program a standby state which is either servo homing or lowered head
 
-Servo servo1;
-Servo servo2;
 
-const int servo1Pin = 9;
-const int servo2Pin = 10;
+Servo HServo;
+Servo VServo;
+
+const int HServoPin = 9;
+const int VServoPin = 10;
 const int homePosition = 90;
+
 void setup() {
-    servo1.attach(servo1Pin);
-    servo2.attach(servo2Pin);
+    HServo.attach(HServoPin);
+    VServo.attach(VServoPin);
 }
 
 void loop() {
     for (int pos = 0; pos <= 180; pos++) {
-        servo1.write(pos);
-        servo2.write(pos);
+        HServo.write(pos);
+        VServo.write(pos);
         delay(15); // Adjust the delay to control the speed of the sweep
     }
     for (int pos = 180; pos >= 0; pos--) {
-        servo1.write(pos);
-        servo2.write(pos);
+        HServo.write(pos);
+        VServo.write(pos);
         delay(15); // Adjust the delay to control the speed of the sweep
     }
 }
