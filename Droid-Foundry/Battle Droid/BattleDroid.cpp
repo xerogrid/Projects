@@ -2,8 +2,6 @@
 #include <Servo.h>
 #include <IRremote.h>
 
-// Project is built on Arduino Nano ATMEGA328 (not the new version)
-
 // Define servo objects
 Servo verticalServo;
 Servo horizontalServo;
@@ -24,10 +22,6 @@ const int verticalUpLimit = 160;
 // Define IR receiver pin
 const int irReceiverPin = 11;
 
-// Create IR receiver object
-IRrecv irrecv(irReceiverPin);
-decode_results results;
-
 void setup() {
     // Attach servos to pins
     verticalServo.attach(verticalPin);
@@ -40,13 +34,16 @@ void setup() {
     // Initialize serial communication
     Serial.begin(9600);
 
-    // Enable the IR receiver
-    irrecv.enableIRIn();
+    // Enable the IR receiver (IRremote 4.x+)
+    IrReceiver.begin(irReceiverPin, ENABLE_LED_FEEDBACK);
 }
 
 void loop() {
-    if (irrecv.decode(&results)) {
-        switch (results.value) {
+    if (IrReceiver.decode()) {
+        Serial.print("Received IR code: 0x");
+        Serial.println(IrReceiver.decodedIRData.decodedRawData, HEX);
+
+        switch (IrReceiver.decodedIRData.decodedRawData) {
             case 0xFF30CF:  // Key 1
                 Serial.println("1");
                 // TODO: YOUR CONTROL
@@ -84,30 +81,32 @@ void loop() {
 
             case 0xFF4AB5:  // Key 8
                 Serial.println("8");
-                // TODO: YOUR CONTROL
+                // Horizontal servo sweep
+                for (int i = horizontalHomePosition; i <= horizontalRightLimit; i++) {
+                    horizontalServo.write(i);
+                    delay(10);
+                }
                 break;
 
             case 0xFF52AD:  // Key 9
                 Serial.println("9");
                 // TODO: YOUR CONTROL
-                int randomHorizontal = random(horizontalLeftLimit, horizontalRightLimit + 1);
-                int randomVertical = random(0, verticalUpLimit + 1);
-                horizontalServo.write(randomHorizontal);
-                verticalServo.write(randomVertical);
                 break;
 
             case 0xFF6897:  // Key *
                 Serial.println("*");
-                // TODO: YOUR CONTROL
+                // Home the servos
                 verticalServo.write(verticalHomePosition);
                 horizontalServo.write(horizontalHomePosition);
                 break;
 
             case 0xFF9867:  // Key 0
                 Serial.println("0");
-                // TODO: YOUR CONTROL
-                verticalServo.detach();
-                horizontalServo.detach();
+                // Vertical servo sweep
+                for (int i = verticalHomePosition; i <= verticalUpLimit; i++) {
+                    verticalServo.write(i);
+                    delay(10);
+                }
                 break;
 
             case 0xFFB04F:  // Key #
@@ -117,37 +116,34 @@ void loop() {
 
             case 0xFF629D:  // Key UP
                 Serial.println("UP");
-                // TODO: YOUR CONTROL
-                int currentPosition = verticalServo.read();
-                if (currentPosition > 0) {
-                  verticalServo.write(currentPosition - 10);  // Move up by 10 degrees
+                // Move Vertical Servo up
+                if (verticalServo.read() > verticalUpLimit) {
+                    verticalServo.write(verticalServo.read() + 1);
                 }
                 break;
 
             case 0xFFA857:  // Key DOWN
                 Serial.println("DOWN");
-                // TODO: YOUR CONTROL
-                int currentPosition = verticalServo.read();
-                if (currentPosition < verticalUpLimit) {
-                  verticalServo.write(currentPosition + 10);  // Move down by 10 degrees
+                // Move Vertical Servo down
+                if (verticalServo.read() < verticalUpLimit) {
+                    verticalServo.write(verticalServo.read() - 1);
                 }
                 break;
 
             case 0xFF22DD:  // Key LEFT
                 Serial.println("LEFT");
-                // TODO: YOUR CONTROL
-                int currentPosition = horizontalServo.read();
-                if (currentPosition > horizontalLeftLimit) {
-                  horizontalServo.write(currentPosition - 10);  // Move left by 10 degrees
+                // Move Horitontal Servo to the left
+                if (horizontalServo.read() > horizontalLeftLimit) {
+                    horizontalServo.write(horizontalServo.read() - 1);
                 }
+
                 break;
 
             case 0xFFC23D:  // Key RIGHT
                 Serial.println("RIGHT");
-                // TODO: YOUR CONTROL
-                int currentPosition = horizontalServo.read();
-                if (currentPosition < horizontalRightLimit) {
-                  horizontalServo.write(currentPosition + 10);  // Move right by 10 degrees
+                // Move Horitontal Servo to the right
+                if (horizontalServo.read() < horizontalRightLimit) {
+                    horizontalServo.write(horizontalServo.read() + 1);
                 }
                 break;
 
@@ -157,9 +153,10 @@ void loop() {
                 break;
 
             default:
-                Serial.println("WARNING: undefined key:");
+                Serial.print("WARNING: Undefined key received - 0x");
+                Serial.println(IrReceiver.decodedIRData.decodedRawData, HEX);
                 break;
         }
-        irrecv.resume();  // Receive the next value
+        IrReceiver.resume();  // Ready for next signal
     }
 }
