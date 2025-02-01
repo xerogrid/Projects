@@ -1,14 +1,12 @@
 #include <Arduino.h>
 
-const int irReceiverPin = 11;  // Your IR receiver signal pin
-
 void setup() {
     Serial.begin(9600);
-    pinMode(irReceiverPin, INPUT);
+    while (!Serial) {}  // Wait for Serial to initialize (for Leonardo/Micro)
+    Serial.println("Serial is working!");
 }
 
 void loop() {
-    int signal = digitalRead(irReceiverPin);  // Read HIGH or LOW
-    Serial.println(signal);
-    delay(100);
+    Serial.println("Loop running...");
+    delay(1000);
 }
