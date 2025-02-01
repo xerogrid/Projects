@@ -1,91 +1,165 @@
 #include <Arduino.h>
 #include <Servo.h>
-//Cloning from WorkingPIRv1 since the servo layout is the same
-//Project is built on Arduino Nano ATMEGA328 (not the new version)
+#include <IRremote.h>
+
+// Project is built on Arduino Nano ATMEGA328 (not the new version)
 
 // Define servo objects
-  Servo verticalServo;
-  Servo horizontalServo;
+Servo verticalServo;
+Servo horizontalServo;
 
 // Define pin numbers
-  const int verticalPin = 9;
-  const int horizontalPin = 10;
-  const int pirPin = 2;
-//const int redLedPin = 3;
-//const int blueLedPin = 4;
-
+const int verticalPin = 9;
+const int horizontalPin = 10;
 
 // Define home positions
-  const int verticalHomePosition = 90;
-  const int horizontalHomePosition = 90;
+const int verticalHomePosition = 90;
+const int horizontalHomePosition = 90;
+
+// Define servo limits
+const int horizontalLeftLimit = 20;
+const int horizontalRightLimit = 160;
+const int verticalUpLimit = 160;
+
+// Define IR receiver pin
+const int irReceiverPin = 11;
+
+// Create IR receiver object
+IRrecv irrecv(irReceiverPin);
+decode_results results;
 
 void setup() {
-  // Configure pin modes
-    pinMode(pirPin, INPUT);
-  //pinMode(redLedPin, OUTPUT);
-  //pinMode(blueLedPin, OUTPUT);
-
-  //digitalWrite(redLedPin, LOW);
-  //digitalWrite(blueLedPin, LOW);
-
-  // Attach servos to pins
+    // Attach servos to pins
     verticalServo.attach(verticalPin);
     horizontalServo.attach(horizontalPin);
 
-  // Move servos to home position
+    // Move servos to home position
     verticalServo.write(verticalHomePosition);
     horizontalServo.write(horizontalHomePosition);
 
-  // Initialize random seed
-    randomSeed(analogRead(0));
-
-  // Initialize serial communication
+    // Initialize serial communication
     Serial.begin(9600);
+
+    // Enable the IR receiver
+    irrecv.enableIRIn();
 }
 
 void loop() {
-  // Read motion sensor pin value
-    int motion = digitalRead(pirPin);
+    if (irrecv.decode(&results)) {
+        switch (results.value) {
+            case 0xFF30CF:  // Key 1
+                Serial.println("1");
+                // TODO: YOUR CONTROL
+                break;
 
-    if (motion == HIGH) {
-      Serial.println("Motion detected!");
+            case 0xFF18E7:  // Key 2
+                Serial.println("2");
+                // TODO: YOUR CONTROL
+                break;
 
-    // Turn on the blue LED when motion is detected
-   // digitalWrite(blueLedPin, HIGH);
-    // Turn off the red LED when motion is detected
-   // digitalWrite(redLedPin, LOW);
+            case 0xFF7A85:  // Key 3
+                Serial.println("3");
+                // TODO: YOUR CONTROL
+                break;
 
-    // Randomly move the vertical servo
-      int randomInterval = random(1000, 5000);  // Get a random interval between 1 and 5 seconds
-      int randomDirection = random(0, 2);       // Get a random direction (0 or 1)
+            case 0xFF10EF:  // Key 4
+                Serial.println("4");
+                // TODO: YOUR CONTROL
+                break;
 
-    if (randomDirection == 0) {
-      verticalServo.write(0);   // Move the vertical servo to the down position
-    } else {
-      verticalServo.write(180); // Move the vertical servo to the up position
+            case 0xFF38C7:  // Key 5
+                Serial.println("5");
+                // TODO: YOUR CONTROL
+                break;
+
+            case 0xFF5AA5:  // Key 6
+                Serial.println("6");
+                // TODO: YOUR CONTROL
+                break;
+
+            case 0xFF42BD:  // Key 7
+                Serial.println("7");
+                // TODO: YOUR CONTROL
+                break;
+
+            case 0xFF4AB5:  // Key 8
+                Serial.println("8");
+                // TODO: YOUR CONTROL
+                break;
+
+            case 0xFF52AD:  // Key 9
+                Serial.println("9");
+                // TODO: YOUR CONTROL
+                int randomHorizontal = random(horizontalLeftLimit, horizontalRightLimit + 1);
+                int randomVertical = random(0, verticalUpLimit + 1);
+                horizontalServo.write(randomHorizontal);
+                verticalServo.write(randomVertical);
+                break;
+
+            case 0xFF6897:  // Key *
+                Serial.println("*");
+                // TODO: YOUR CONTROL
+                verticalServo.write(verticalHomePosition);
+                horizontalServo.write(horizontalHomePosition);
+                break;
+
+            case 0xFF9867:  // Key 0
+                Serial.println("0");
+                // TODO: YOUR CONTROL
+                verticalServo.detach();
+                horizontalServo.detach();
+                break;
+
+            case 0xFFB04F:  // Key #
+                Serial.println("#");
+                // TODO: YOUR CONTROL
+                break;
+
+            case 0xFF629D:  // Key UP
+                Serial.println("UP");
+                // TODO: YOUR CONTROL
+                int currentPosition = verticalServo.read();
+                if (currentPosition > 0) {
+                  verticalServo.write(currentPosition - 10);  // Move up by 10 degrees
+                }
+                break;
+
+            case 0xFFA857:  // Key DOWN
+                Serial.println("DOWN");
+                // TODO: YOUR CONTROL
+                int currentPosition = verticalServo.read();
+                if (currentPosition < verticalUpLimit) {
+                  verticalServo.write(currentPosition + 10);  // Move down by 10 degrees
+                }
+                break;
+
+            case 0xFF22DD:  // Key LEFT
+                Serial.println("LEFT");
+                // TODO: YOUR CONTROL
+                int currentPosition = horizontalServo.read();
+                if (currentPosition > horizontalLeftLimit) {
+                  horizontalServo.write(currentPosition - 10);  // Move left by 10 degrees
+                }
+                break;
+
+            case 0xFFC23D:  // Key RIGHT
+                Serial.println("RIGHT");
+                // TODO: YOUR CONTROL
+                int currentPosition = horizontalServo.read();
+                if (currentPosition < horizontalRightLimit) {
+                  horizontalServo.write(currentPosition + 10);  // Move right by 10 degrees
+                }
+                break;
+
+            case 0xFF02FD:  // Key OK
+                Serial.println("OK");
+                // TODO: YOUR CONTROL
+                break;
+
+            default:
+                Serial.println("WARNING: undefined key:");
+                break;
+        }
+        irrecv.resume();  // Receive the next value
     }
-
-    delay(randomInterval);  // Wait for the random interval
-
-    // Hold the position for 2 seconds
-    verticalServo.write(verticalHomePosition);  // Move the vertical servo to the middle position
-    delay(2000);                                 // Hold the position for 2 seconds
-
-    // Return to home position
-    verticalServo.write(verticalHomePosition);  // Move the vertical servo to the home position
-
-    // Randomly sweep the horizontal servo
-    randomInterval = random(2000, 5000);  // Get a random interval between 2 and 5 seconds
-    int randomAngle = random(0, 161);     // Get a random angle between 0 and 180 degrees
-
-    horizontalServo.write(randomAngle);
-    delay(randomInterval);
-
-    } else {
-    // Turn on the red LED when no motion is detected and no servo is running
-   // digitalWrite(redLedPin, HIGH);
-    
-    // Reset blue LED to off
-   // digitalWrite(blueLedPin, LOW);
-  }
 }
