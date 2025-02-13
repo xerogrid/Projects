@@ -14,8 +14,8 @@ const int verticalHomePosition   = 90;
 const int horizontalHomePosition = 90;
 const int horizontalLeftLimit    = 20;
 const int horizontalRightLimit   = 160;
-const int verticalUpLimit        = 160;  // Maximum vertical angle
-const int verticalDownLimit      = 20;   // Minimum vertical angle
+const int verticalUpLimit        = 100;  // Maximum vertical angle 
+const int verticalDownLimit      = 30;   // Minimum vertical angle
 
 // ------------------------------
 // Object Declarations
