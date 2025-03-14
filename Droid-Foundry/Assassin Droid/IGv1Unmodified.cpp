@@ -23,11 +23,11 @@
 // ---------------CONSTANTS---------------
 //========================================
 // Assign arduino pins
-#define pixelPin 6                // Pixels are on this pin
 const int chinPanPin = 2;         // Chin pan servo is on this pin
 const int eyePanPin = 3;          // Mid drive plate servo is on this pin
 const int eyeTiltPin = 4;         // Eye tilt servo is on this pin
 const int sensorPanPin = 5;       // Top Servo is on this pin
+#define pixelPin 6                // Pixels are on this pin
 
 // Number of LEDs
 #define pixelNum 11
@@ -56,7 +56,7 @@ const int chinPanRightSpeed = chinPanStop + chinPanSpeedRange;       // servo ma
 const int sensorPanLeftSpeed = sensorPanStop - sensorPanSpeedRange;  // servo max speed left (360°)
 const int sensorPanRightSpeed = sensorPanStop + sensorPanSpeedRange; // servo max speed right (360°)
 
-// Set servo moveing time limits (microseconds)
+// Set servo moving time limits (microseconds)
 unsigned long  chinPanIntervalMax =    4000000;   // MAX time servo will move (360)
 unsigned long  chinPanIntervalMin =    2000000;   // MIN time servo will move (360)
 unsigned long  eyePanIntervalMax =    20000;     // Max duration between steps
