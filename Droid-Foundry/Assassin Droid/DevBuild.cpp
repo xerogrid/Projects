@@ -12,10 +12,7 @@
 //========================================
 // ---------------LIBRARIES---------------
 //========================================
-// For servos
 #include <Servo.h>                // Get Servo library
-
-// For WS2812B LEDs
 #include <Adafruit_NeoPixel.h>    // Get NeoPixel library
 
 //========================================
@@ -83,7 +80,6 @@ const unsigned long  pixelWaitMin =     100000;
 //========================================
 //--------------VARIABLES-----------------
 //========================================
-// Time keeping (microseconds)
 unsigned long currentMicros = 0;                        
 unsigned long previousChinPanMicros =   currentMicros;  
 unsigned long previousEyePanMicros =    currentMicros;  
@@ -96,7 +92,6 @@ int  eyePanPosition =   eyePanStop;    // current angle of the servo (degrees)
 int  eyeTiltPosition =  eyeTiltStop;   // current angle of the servo (degrees)
 int  sensorPanSpeed =   sensorPanStop; // servo step size (degrees)
 
-// For 180° or 270° servos
 int            eyePanTarget = eyePanStop;             
 int            eyePanStep = eyePanStepMin;            
 unsigned long  eyePanContact = previousEyePanMicros;  
@@ -104,14 +99,12 @@ int            eyeTiltTarget = eyeTiltStop;
 int            eyeTiltStep = eyeTiltStepMin;          
 unsigned long  eyeTiltContact = previousEyePanMicros; 
 
-// Set initial wait time (us)
 unsigned long  chinPanWait = chinPanWaitMin; 
 unsigned long  eyePanWait = eyePanWaitMin;
 unsigned long  eyeTiltWait = eyeTiltWaitMin;
 unsigned long  sensorPanWait = sensorPanWaitMin;
 unsigned long  pixelWait = pixelWaitMin;
 
-// Set initial move time (us)                     
 unsigned long  chinPanInterval = chinPanIntervalMin;      
 unsigned long  eyePanInterval = eyePanIntervalMin;        
 unsigned long  eyeTiltInterval = eyeTiltIntervalMin;      
@@ -125,15 +118,19 @@ Servo eyeTiltServo;
 Servo sensorPanServo;
 Adafruit_NeoPixel pixels(pixelNum, pixelPin, NEO_GRB + NEO_KHZ800);
 
+//------------------ NEW MODE SWITCHING ------------------
+// We'll run the main loop (servos and LED pizzazz) only during an "active" period of 5-10 minutes.
+// Otherwise, the system stays idle (i.e. does nothing) for a period of 15-30 minutes.
+unsigned long modeSwitchTime = 0;    // time when the current mode started (using millis())
+unsigned long modeDuration = 0;      // duration of current mode (in ms)
+bool activeMode = false;             // false = idle; true = active
+
 //========================================
 //----- NEW NIGHTRIDER & SERVO TEST ------
 //========================================
-
-// Global variables for the nightrider LED effect
 int nightriderIndex = 0;
 int nightriderDirection = 1;
 
-// Update the LED strip with a single green LED moving in "nightrider" style
 void updateNightriderGreen() {
   pixels.clear();
   pixels.setPixelColor(nightriderIndex, pixels.Color(0, 250, 0));
@@ -148,7 +145,6 @@ void updateNightriderGreen() {
   }
 }
 
-// A non-blocking delay replacement for test mode that updates the LED effect
 void testDelay(unsigned long ms) {
   unsigned long start = millis();
   while(millis() - start < ms) {
@@ -157,7 +153,6 @@ void testDelay(unsigned long ms) {
   }
 }
 
-// Gradually sweep a servo from startAngle to endAngle, updating the LED effect as it moves
 void sweepServo(Servo &servo, int startAngle, int endAngle, int stepDelay) {
   int step = (endAngle > startAngle) ? 1 : -1;
   for (int angle = startAngle; angle != endAngle; angle += step) {
@@ -170,7 +165,6 @@ void sweepServo(Servo &servo, int startAngle, int endAngle, int stepDelay) {
   delay(stepDelay);
 }
 
-// Test a given servo by sweeping from home to home+offset then home, then home to home-offset then home
 void testServo(Servo &servo, int home, int offset, int stepDelay) {
   servo.write(home);
   delay(200);
@@ -180,74 +174,53 @@ void testServo(Servo &servo, int home, int offset, int stepDelay) {
   sweepServo(servo, home - offset, home, stepDelay);
 }
 
-// Run tests for all servos sequentially
 void servoTest() {
-  // Test chin pan servo (sweep 20° each direction)
   testServo(chinPanServo, chinPanStop, 20, 20);
-  // Test eye pan servo (sweep 20° each direction)
   testServo(eyePanServo, eyePanStop, 20, 20);
-  // Test eye tilt servo (sweep 10° each direction)
   testServo(eyeTiltServo, eyeTiltStop, 10, 20);
-  // Test sensor pan servo (sweep 20° each direction)
   testServo(sensorPanServo, sensorPanStop, 20, 20);
 }
 
 //========================================
 //------ NEW LED CONNECTION LOGIC ------
 //========================================
-
-// Stub function to check LED connection status.
-// In a real implementation, this should check a hardware signal.
 bool checkLEDConnection() {
-  return true; // Assume connected by default.
+  return true; // Stub: assume connected by default.
 }
 
-// Global variable to store last known LED connection state.
 bool ledsConnected = true;
 
-// Flash white twice with 250ms intervals
 void flashWhiteTwice() {
-  // First flash
   pixels.fill(pixels.Color(255, 255, 255));
   pixels.show();
   delay(250);
-  // Off for 250ms
   pixels.clear();
   pixels.show();
   delay(250);
-  // Second flash
   pixels.fill(pixels.Color(255, 255, 255));
   pixels.show();
   delay(250);
-  // Off for 250ms
   pixels.clear();
   pixels.show();
   delay(250);
 }
 
 // NEW LED PIZZAZZ FUNCTIONS
-
-// Blink all LEDs twice as red then resume normal state.
 void blinkTwiceRed() {
-  // First red flash at full brightness
   pixels.fill(pixels.Color(250, 0, 0));
   pixels.show();
   delay(250);
-  // Off
   pixels.clear();
   pixels.show();
   delay(250);
-  // Second red flash
   pixels.fill(pixels.Color(250, 0, 0));
   pixels.show();
   delay(250);
-  // Off
   pixels.clear();
   pixels.show();
   delay(250);
 }
 
-// Blink all LEDs twice as red at half brightness (no fade).
 void blinkHalfRedNoFade() {
   pixels.setBrightness(100);  // set to half brightness
   pixels.fill(pixels.Color(250, 0, 0));
@@ -290,34 +263,54 @@ void setup() {
   eyePanServo.write(eyePanStop);
   eyeTiltServo.write(eyeTiltStop);
   sensorPanServo.write(sensorPanStop);
-  delay(500); // Allow servos to reach home
+  delay(500);
 
   // Run servo tests with nightrider green LED effect
   servoTest();
-
-  // (Optional) Pause briefly after tests before entering main loop
   delay(1000);
+
+  // Initialize mode-switching:
+  // Start in idle mode (i.e. main loop inactive) for a random period of 15-30 minutes.
+  activeMode = false;
+  modeSwitchTime = millis();
+  modeDuration = random(900000, 1800000); // 15-30 minutes in ms
 }
 
 //========================================
 //---------------- LOOP ------------------
 //========================================
 void loop() {
+  unsigned long now = millis();
+  
+  // Check if it's time to toggle mode:
+  if (now - modeSwitchTime >= modeDuration) {
+    activeMode = !activeMode;      // Toggle mode
+    modeSwitchTime = now;          // Reset mode start time
+    if (activeMode) {
+      modeDuration = random(300000, 600000);   // Active duration: 5-10 minutes
+    } else {
+      modeDuration = random(900000, 1800000);    // Idle duration: 15-30 minutes
+    }
+  }
+  
+  if (!activeMode) {
+    // In idle mode, do nothing (or you can add a simple LED indicator here).
+    return;
+  }
+  
+  // Active mode: run normal operations
+  
   // LED connection check block
   bool currentLEDStatus = checkLEDConnection();
   if (!currentLEDStatus && ledsConnected) {
-    // LED disconnected event detected
     ledsConnected = false;
   } else if (currentLEDStatus && !ledsConnected) {
-    // LED reconnected event detected - flash white twice
     flashWhiteTwice();
     ledsConnected = true;
   }
   
-  // NEW LED PIZZAZZ LOGIC:
-  // While running in the main loop (normal solid red mode),
-  // occasionally (e.g., 10% chance) trigger one of two special patterns.
-  if(currentMicros >= pixelInterval + previousPixelMicros) {
+  // LED pizzazz logic:
+  if (currentMicros >= pixelInterval + previousPixelMicros) {
     int chance = random(0, 100); // 0 to 99
     if (chance < 10) { // 10% chance for blink twice red at full brightness
       blinkTwiceRed();
@@ -326,7 +319,7 @@ void loop() {
     } else {
       uint32_t red = pixels.Color(250, 0, 0);
       pixels.fill(red, 0, pixelNum);
-      // Additionally, randomly turn 1 to 3 LEDs white
+      // Additionally, randomly turn 1-3 LEDs white
       int whiteCount = random(1, 4); // 1 to 3
       for (int i = 0; i < whiteCount; i++) {
         int idx = random(0, pixelNum);
@@ -338,147 +331,106 @@ void loop() {
     pixelInterval = random(pixelIntervalMin, pixelIntervalMax);
   }
   
-  currentMicros = micros();                  
-
-  moveChinPan();                             
-  moveEyePan();                              
-  moveEyeTilt();                             
-  moveSensorPan();                          
+  currentMicros = micros();
+  moveChinPan();
+  moveEyePan();
+  moveEyeTilt();
+  moveSensorPan();
 }
 
-//======================================
+//========================================
 //------------- FUNCTIONS --------------
-//======================================
+//========================================
 void moveChinPan() {
-    if (currentMicros >= chinPanInterval + previousChinPanMicros) {
-      chinPanSpeed = chinPanStop;
+  if (currentMicros >= chinPanInterval + previousChinPanMicros) {
+    chinPanSpeed = chinPanStop;
+    chinPanServo.write(chinPanSpeed);
+    if (currentMicros >= chinPanWait + chinPanInterval + previousChinPanMicros) {
+      previousChinPanMicros = previousChinPanMicros + chinPanInterval + chinPanWait;
+      // 50% chance to use sensor pan parameters for chin pan update
+      if (random(0, 2) == 0) {
+        chinPanInterval = random(sensorPanIntervalMin, sensorPanIntervalMax);
+        chinPanWait = random(sensorPanWaitMin, sensorPanWaitMax);
+        chinPanSpeed = random(sensorPanLeftSpeed, sensorPanRightSpeed);
+      } else {
+        chinPanInterval = random(chinPanIntervalMin, chinPanIntervalMax);
+        chinPanWait = random(chinPanWaitMin, chinPanWaitMax);
+        chinPanSpeed = random(chinPanLeftSpeed, chinPanRightSpeed);
+      }
       chinPanServo.write(chinPanSpeed);
-      if (currentMicros >= chinPanWait + chinPanInterval + previousChinPanMicros) {
-        previousChinPanMicros = previousChinPanMicros + chinPanInterval + chinPanWait;
-        
-        // 50% chance to use sensor pan parameters for chin pan update
-        if (random(0, 2) == 0) {
-            chinPanInterval = random(sensorPanIntervalMin, sensorPanIntervalMax);
-            chinPanWait = random(sensorPanWaitMin, sensorPanWaitMax);
-            chinPanSpeed = random(sensorPanLeftSpeed, sensorPanRightSpeed);
-        } else {
-            chinPanInterval = random(chinPanIntervalMin, chinPanIntervalMax);
-            chinPanWait = random(chinPanWaitMin, chinPanWaitMax);
-            chinPanSpeed = random(chinPanLeftSpeed, chinPanRightSpeed);
-        }
-        chinPanServo.write(chinPanSpeed);
-      }
     }
-}
-
-void moveEyePan() {                                                     
-  if (currentMicros >= eyePanInterval + previousEyePanMicros) {            
-    if (eyePanPosition < eyePanTarget) {                                     
-       eyePanPosition += eyePanStep;                                          
-       previousEyePanMicros = currentMicros;                                  
-         if (eyePanPosition >= eyePanTarget) {                                  
-          eyePanPosition = eyePanTarget;                                         
-           eyePanContact = currentMicros;                                        
-         }
-       eyePanServo.write(eyePanPosition);                                  
-    }
-    if (eyePanPosition > eyePanTarget) {                                    
-      eyePanPosition -= eyePanStep;                                           
-      previousEyePanMicros = currentMicros;                                   
-      if (eyePanPosition < 0) eyePanPosition = 0;                               
-      if (eyePanPosition <= eyePanTarget) {                                    
-        eyePanPosition = eyePanTarget;                                          
-        eyePanContact = currentMicros;                                          
-      }
-      eyePanServo.write(eyePanPosition);                                       
-    }
-    if (eyePanPosition == eyePanTarget) {                                     
-      if (eyePanWait + eyePanContact <= currentMicros) {                      
-        eyePanWait = random(eyePanWaitMin, eyePanWaitMax);                      
-        eyePanTarget = random(eyePanRangeMin, eyePanRangeMax);                  
-        eyePanStep = random(eyePanStepMin, eyePanStepMax);                      
-        eyePanInterval = random(eyePanIntervalMin, eyePanIntervalMax);          
-    }
-  }
   }
 }
 
-void moveEyeTilt() {                                                      
-  if (eyeTiltPosition < eyeTiltTarget) {                                    
-     eyeTiltPosition += eyeTiltStep;                                          
-       if (eyeTiltPosition >= eyeTiltTarget) {                                
-         eyeTiltPosition = eyeTiltTarget;                                       
-         eyeTiltContact = currentMicros;                                        
-       }
-       eyeTiltServo.write(eyeTiltPosition);                                   
+void moveEyePan() {
+  if (currentMicros >= eyePanInterval + previousEyePanMicros) {
+    if (eyePanPosition < eyePanTarget) {
+      eyePanPosition += eyePanStep;
+      previousEyePanMicros = currentMicros;
+      if (eyePanPosition >= eyePanTarget) {
+        eyePanPosition = eyePanTarget;
+        eyePanContact = currentMicros;
+      }
+      eyePanServo.write(eyePanPosition);
+    }
+    if (eyePanPosition > eyePanTarget) {
+      eyePanPosition -= eyePanStep;
+      previousEyePanMicros = currentMicros;
+      if (eyePanPosition < 0) eyePanPosition = 0;
+      if (eyePanPosition <= eyePanTarget) {
+        eyePanPosition = eyePanTarget;
+        eyePanContact = currentMicros;
+      }
+      eyePanServo.write(eyePanPosition);
+    }
+    if (eyePanPosition == eyePanTarget) {
+      if (eyePanWait + eyePanContact <= currentMicros) {
+        eyePanWait = random(eyePanWaitMin, eyePanWaitMax);
+        eyePanTarget = random(eyePanRangeMin, eyePanRangeMax);
+        eyePanStep = random(eyePanStepMin, eyePanStepMax);
+        eyePanInterval = random(eyePanIntervalMin, eyePanIntervalMax);
+      }
+    }
   }
-  if (eyeTiltPosition > eyeTiltTarget) {                                   
-    eyeTiltPosition -= eyeTiltStep;                                          
+}
+
+void moveEyeTilt() {
+  if (eyeTiltPosition < eyeTiltTarget) {
+    eyeTiltPosition += eyeTiltStep;
+    if (eyeTiltPosition >= eyeTiltTarget) {
+      eyeTiltPosition = eyeTiltTarget;
+      eyeTiltContact = currentMicros;
+    }
+    eyeTiltServo.write(eyeTiltPosition);
+  }
+  if (eyeTiltPosition > eyeTiltTarget) {
+    eyeTiltPosition -= eyeTiltStep;
     if (eyeTiltPosition < 0) eyeTiltPosition = 0;
-    if (eyeTiltPosition <= eyeTiltTarget) {                                   
-      eyeTiltPosition = eyeTiltTarget;                                          
-      eyeTiltContact = currentMicros;                                           
+    if (eyeTiltPosition <= eyeTiltTarget) {
+      eyeTiltPosition = eyeTiltTarget;
+      eyeTiltContact = currentMicros;
     }
-    eyeTiltServo.write(eyeTiltPosition);                                      
+    eyeTiltServo.write(eyeTiltPosition);
   }
-  if (eyeTiltPosition == eyeTiltTarget) {                                   
-    if (eyeTiltWait + eyeTiltContact <= currentMicros) {                      
-       eyeTiltWait = random(eyeTiltWaitMin, eyeTiltWaitMax);                    
-       eyeTiltTarget = random(eyeTiltRangeMin, eyeTiltRangeMax);                
-       eyeTiltStep = random(eyeTiltStepMin, eyeTiltStepMax);                    
+  if (eyeTiltPosition == eyeTiltTarget) {
+    if (eyeTiltWait + eyeTiltContact <= currentMicros) {
+      eyeTiltWait = random(eyeTiltWaitMin, eyeTiltWaitMax);
+      eyeTiltTarget = random(eyeTiltRangeMin, eyeTiltRangeMax);
+      eyeTiltStep = random(eyeTiltStepMin, eyeTiltStepMax);
     }
   }
 }
 
-void moveSensorPan() {                                                                             
-      if (currentMicros >= sensorPanInterval + previousSensorPanMicros) {                                
-        sensorPanSpeed = sensorPanStop;                                                                     
-        sensorPanServo.write(sensorPanSpeed);                                                                  
-          if (currentMicros >= sensorPanWait + sensorPanInterval + previousSensorPanMicros) {                  
-          previousSensorPanMicros = previousSensorPanMicros + sensorPanInterval + sensorPanWait;                
-          sensorPanInterval = random(sensorPanIntervalMin, sensorPanIntervalMax);                               
-          sensorPanWait = random(sensorPanWaitMin, sensorPanWaitMax);                                           
-          sensorPanSpeed = random(sensorPanLeftSpeed, sensorPanRightSpeed);                                     
-          sensorPanServo.write(sensorPanSpeed);                                                                 
-        }
-      }
+void moveSensorPan() {
+  if (currentMicros >= sensorPanInterval + previousSensorPanMicros) {
+    sensorPanSpeed = sensorPanStop;
+    sensorPanServo.write(sensorPanSpeed);
+    if (currentMicros >= sensorPanWait + sensorPanInterval + previousSensorPanMicros) {
+      previousSensorPanMicros = previousSensorPanMicros + sensorPanInterval + sensorPanWait;
+      sensorPanInterval = random(sensorPanIntervalMin, sensorPanIntervalMax);
+      sensorPanWait = random(sensorPanWaitMin, sensorPanWaitMax);
+      sensorPanSpeed = random(sensorPanLeftSpeed, sensorPanRightSpeed);
+      sensorPanServo.write(sensorPanSpeed);
+    }
+  }
 }
-
-void moveLED01() { 
-      // This function now randomly triggers one of the two special LED effects,
-      // or defaults to the normal solid red state with a few random white LEDs.
-      if(currentMicros >= pixelInterval + previousPixelMicros) {
-        int chance = random(0, 100); // 0 to 99
-        if (chance < 10) { // 10% chance for blink twice red at full brightness
-          blinkTwiceRed();
-        } else if (chance < 20) { // Next 10% chance for blink twice red at half brightness (no fade)
-          blinkHalfRedNoFade();
-        } else {
-          uint32_t red = pixels.Color(250, 0, 0);
-          pixels.fill(red, 0, pixelNum);
-          // Randomly turn 1 to 3 LEDs white
-          int whiteCount = random(1, 4); // 1 to 3 LEDs
-          for (int i = 0; i < whiteCount; i++) {
-            int idx = random(0, pixelNum);
-            pixels.setPixelColor(idx, pixels.Color(255, 255, 255));
-          }
-          pixels.show();
-        }
-        previousPixelMicros = currentMicros;
-        pixelInterval = random(pixelIntervalMin, pixelIntervalMax);
-      }
-}
-    
-void moveLED02() { 
-      if(currentMicros >= pixelInterval + previousPixelMicros){                      
-        uint32_t rainbow = pixels.Color(random(0,250),random(0,250),random(0,250));  
-        pixels.fill(rainbow, 0, pixelNum);                                           
-        pixels.show();                                                               
-        previousPixelMicros = currentMicros;                                         
-        pixelInterval = random(pixelIntervalMin, pixelIntervalMax);                  
-      }
-}
-
-//========================================
-//--------------- THE END ----------------
-//========================================
