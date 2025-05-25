@@ -140,6 +140,10 @@ ProductionState currentProductionState = PROD_DORMANT;
 unsigned long productionStateStartTime = 0;
 unsigned long productionStateDuration = 0;
 
+// Dormant LED sweep variables
+unsigned long lastDormantSweepTime = 0;
+const unsigned long dormantSweepInterval = 60000; // 60 seconds
+
 //========================================
 //---------- LED FUNCTIONS ---------------
 //========================================
@@ -196,6 +200,23 @@ void updateLEDs() {
     previousPixelMicros = currentMicros;
     pixelInterval = random(pixelIntervalMin, pixelIntervalMax);
   }
+}
+
+void dormantLEDSweep() {
+  pixels.clear();
+  
+  // Sweep red LEDs around the ring
+  for (int i = 0; i < pixelNum; i++) {
+    pixels.clear();
+    pixels.setPixelColor(i, pixels.Color(150, 0, 0)); // Dimmer red for dormant mode
+    pixels.show();
+    delay(100);
+  }
+  
+  // Brief pause then clear
+  delay(200);
+  pixels.clear();
+  pixels.show();
 }
 
 //========================================
@@ -400,6 +421,7 @@ void setup() {
     currentProductionState = PROD_DORMANT;
     productionStateStartTime = millis();
     productionStateDuration = random(120000, 600000); // Start dormant for 2-10 minutes
+    lastDormantSweepTime = millis(); // Initialize dormant sweep timer
   } else {
     Serial.println("Normal Mode - All systems active");
   }
@@ -417,7 +439,11 @@ void loop() {
     
     switch (currentProductionState) {
       case PROD_DORMANT:
-        // Do nothing - complete silence
+        // Check for dormant LED sweep every 60 seconds
+        if (millis() - lastDormantSweepTime >= dormantSweepInterval) {
+          dormantLEDSweep();
+          lastDormantSweepTime = millis();
+        }
         return;
         
       case PROD_IDLE_SCANNING:
