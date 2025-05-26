@@ -142,7 +142,7 @@ unsigned long productionStateDuration = 0;
 
 // Dormant LED sweep variables
 unsigned long lastDormantSweepTime = 0;
-const unsigned long dormantSweepInterval = 60000; // 60 seconds
+const unsigned long dormantSweepInterval = 10000; // 10 seconds
 
 //========================================
 //---------- LED FUNCTIONS ---------------
@@ -360,32 +360,31 @@ void updateProductionMode() {
     
     switch (currentProductionState) {
       case PROD_DORMANT:
-        // Switch to idle scanning
-        currentProductionState = PROD_IDLE_SCANNING;
-        productionStateDuration = random(5000, 20000); // 5-20 seconds
-        Serial.println("Production Mode: Entering Idle Scanning");
+        // Random chance for full active mode (25% chance) or idle scanning (75% chance)
+        if (random(0, 100) < 25) {
+          currentProductionState = PROD_FULL_ACTIVE;
+          productionStateDuration = random(120000, 300000); // 2-5 minutes
+          Serial.println("Production Mode: Entering Full Active");
+        } else {
+          currentProductionState = PROD_IDLE_SCANNING;
+          productionStateDuration = random(5000, 20000); // 5-20 seconds
+          Serial.println("Production Mode: Entering Idle Scanning");
+        }
         break;
         
       case PROD_IDLE_SCANNING:
-        // Switch back to dormant
+        // Always return to dormant after idle scanning
         currentProductionState = PROD_DORMANT;
         productionStateDuration = random(120000, 600000); // 2-10 minutes
         Serial.println("Production Mode: Entering Dormant");
         break;
         
       case PROD_FULL_ACTIVE:
-        // Switch to dormant
+        // Always return to dormant after full active
         currentProductionState = PROD_DORMANT;
         productionStateDuration = random(600000, 1800000); // 10-30 minutes
         Serial.println("Production Mode: Entering Dormant");
         break;
-    }
-    
-    // Random chance to enter full active mode from dormant
-    if (currentProductionState == PROD_DORMANT && random(0, 100) < 5) { // 5% chance
-      currentProductionState = PROD_FULL_ACTIVE;
-      productionStateDuration = random(120000, 300000); // 2-5 minutes
-      Serial.println("Production Mode: Entering Full Active");
     }
   }
 }
