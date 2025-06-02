@@ -1,3 +1,6 @@
+// All Credit for original code and code format goes to xyz.
+// Thanks for the inspiration.
+
 //////////////////////////////////////////
 //                                      //
 //      IG-SERIES ASSASSIN DROID        //
@@ -5,7 +8,7 @@
 //            MANUFACTURED BY           //
 //           HOLOWAN LABORATORIES       //
 //                                      //
-//                 UNIT IG-11           //
+//                 UNIT IG-12           //
 //                                      //
 //////////////////////////////////////////
 
@@ -43,7 +46,7 @@ const int eyeTiltRangeMin = 0;      // Servo min angle (RECHECK value every time
 const int sensorPanRangeMax = 270;  // Servo Max angle (270 degree servo)
 const int sensorPanRangeMin = 0;    // Servo min angle
 
-// Neutral position (determined experimentally)
+// Neutral position (determined experimentally, recommend checking prior to or during assembly)
 const int chinPanStop = 135;       // Middle position for 270 degree servo
 const int eyePanStop = 90;         // Middle of Pan
 const int eyeTiltStop = 60;        // Eyes are level (RECHECK value every time head is reassembled)
@@ -82,6 +85,18 @@ const unsigned long  eyeTiltWaitMax =   5000000;
 const unsigned long  eyeTiltWaitMin =   2000000;
 const unsigned long  sensorPanWaitMax = 3000000;       
 const unsigned long  sensorPanWaitMin = 2000000;       
+
+// Set DFPlayer audio file numbers and what they are
+// 001.mp3 - System Boot and Diagnostic audio
+// 002.mp3 - Greeting audio after startup
+// 003.mp3 - Missing Limbs Gag Audio
+// 004.mp3 - Generic Robot Noises
+// 005.mp3 -
+// 006.mp3 -
+// 007.mp3 -
+// 008.mp3 -
+// 009.mp3 -
+
 
 //========================================
 //--------------VARIABLES-----------------
