@@ -37,11 +37,11 @@ const int dfPlayerTXPin = 11;     // DFPlayer TX pin
 // WIRING: Connect one wire from each switch to the analog pin, 
 //         and the other wire to GND. No external resistors needed.
 //         Internal pull-up resistors are used - switches read LOW when pressed.
-const int whiteButtonPin = A1;    // White momentary button - "Show off mode"
+const int whiteButtonPin = A1;    // White momentary button - "Force Restart"
 const int redButtonPin = A2;      // Red momentary button - "Stop All"
 const int muteTogglePin = A3;     // Toggle switch - Mute/Unmute audio
 const int homeTogglePin = A4;     // Toggle switch - Home servos/Resume
-const int reservedTogglePin = A5; // Toggle switch - Reserved for later
+const int productionTogglePin = A5; // Toggle switch - Production Mode on/off
 
 // Number of LEDs
 #define pixelNum 11
@@ -165,27 +165,23 @@ bool whiteButtonPressed = false;
 bool redButtonPressed = false;
 bool muteToggleState = false;
 bool homeToggleState = false;
-bool reservedToggleState = false;
+bool productionToggleState = false;
 
 bool lastWhiteButtonState = false;
 bool lastRedButtonState = false;
 bool lastMuteToggleState = false;
 bool lastHomeToggleState = false;
-bool lastReservedToggleState = false;
+bool lastProductionToggleState = false;
 
 unsigned long lastWhiteButtonTime = 0;
 unsigned long lastRedButtonTime = 0;
 unsigned long lastMuteToggleTime = 0;
 unsigned long lastHomeToggleTime = 0;
-unsigned long lastReservedToggleTime = 0;
+unsigned long lastProductionToggleTime = 0;
 
 const unsigned long debounceDelay = 50; // 50ms debounce
 
 // Control state variables
-bool showOffModeActive = false;
-unsigned long showOffModeStartTime = 0;
-const unsigned long showOffModeDuration = 60000; // 1 minute
-
 bool stopAllActive = false;
 bool audioMuted = false;
 bool servosHomed = false;
@@ -193,7 +189,7 @@ bool servosHomed = false;
 //========================================
 //---------- PRODUCTION MODE -------------
 //========================================
-bool productionMode = true;  // Set to true for production behavior
+bool productionMode = true;  // Set by switch, true for production behavior
 
 // Production mode states
 enum ProductionState {
@@ -231,7 +227,7 @@ void readHardwareControls() {
   bool currentRedButton = !digitalRead(redButtonPin);
   bool currentMuteToggle = !digitalRead(muteTogglePin);
   bool currentHomeToggle = !digitalRead(homeTogglePin);
-  bool currentReservedToggle = !digitalRead(reservedTogglePin);
+  bool currentProductionToggle = !digitalRead(productionTogglePin);
   
   // Debounce white button (momentary)
   if (currentWhiteButton != lastWhiteButtonState) {
@@ -285,30 +281,85 @@ void readHardwareControls() {
   }
   lastHomeToggleState = currentHomeToggle;
   
-  // Debounce reserved toggle (for future use)
-  if (currentReservedToggle != lastReservedToggleState) {
-    lastReservedToggleTime = now;
+  // Debounce production toggle
+  if (currentProductionToggle != lastProductionToggleState) {
+    lastProductionToggleTime = now;
   }
-  if ((now - lastReservedToggleTime) > debounceDelay) {
-    if (currentReservedToggle != reservedToggleState) {
-      reservedToggleState = currentReservedToggle;
-      handleReservedToggle();
+  if ((now - lastProductionToggleTime) > debounceDelay) {
+    if (currentProductionToggle != productionToggleState) {
+      productionToggleState = currentProductionToggle;
+      handleProductionToggle();
     }
   }
-  lastReservedToggleState = currentReservedToggle;
+  lastProductionToggleState = currentProductionToggle;
 }
 
 void handleWhiteButtonPress() {
-  Serial.println(F("WHITE: Show Off Mode"));
-  showOffModeActive = true;
-  showOffModeStartTime = millis();
+  Serial.println(F("WHITE: Force Restart"));
   
   if (productionMode) {
-    currentProductionState = PROD_FULL_ACTIVE;
+    // Force immediate production mode state change
+    Serial.println(F("Forcing production state change"));
+    
+    // Randomly choose next state (avoid staying in dormant)
+    if (random(0, 100) < 70) {
+      currentProductionState = PROD_FULL_ACTIVE;
+      productionStateDuration = random(60000, 180000); // 1-3 minutes
+      Serial.println(F("Restart: Full Active"));
+      
+      // Play restart audio
+      if (!audioMuted) {
+        playAudioFile(2); // Greeting audio
+      }
+    } else {
+      currentProductionState = PROD_IDLE_SCANNING;
+      productionStateDuration = random(10000, 30000); // 10-30 seconds
+      Serial.println(F("Restart: Idle Scanning"));
+      
+      // Play scanning audio
+      if (!audioMuted) {
+        playAudioFile(3); // Scanning audio
+      }
+    }
+    
     productionStateStartTime = millis();
-    productionStateDuration = showOffModeDuration;
-    Serial.println(F("Override: Full Active"));
+    
+  } else {
+    // Demo mode (production false) - trigger reboot sequence
+    Serial.println(F("Demo mode restart sequence"));
+    
+    // Brief reboot LED sequence
+    for (int i = 0; i < 3; i++) {
+      pixels.fill(pixels.Color(255, 255, 255)); // White
+      pixels.show();
+      delay(150);
+      pixels.clear();
+      pixels.show();
+      delay(150);
+    }
+    
+    // Play reboot audio
+    if (!audioMuted) {
+      playAudioFile(1); // Boot audio
+    }
+    
+    // Briefly home all servos then resume
+    homeAllServos();
+    delay(500);
+    
+    // Set new random targets for immediate movement
+    chinPanTarget = random(chinPanRangeMin, chinPanRangeMax);
+    eyePanTarget = random(eyePanRangeMin, eyePanRangeMax);
+    eyeTiltTarget = random(eyeTiltRangeMin, eyeTiltRangeMax);
+    sensorPanTarget = random(sensorPanRangeMin, sensorPanRangeMax);
   }
+  
+  // Visual feedback - quick blue flash to indicate restart
+  pixels.fill(pixels.Color(0, 100, 255)); // Blue
+  pixels.show();
+  delay(200);
+  pixels.clear();
+  pixels.show();
 }
 
 void handleRedButtonPress() {
@@ -339,9 +390,20 @@ void handleHomeToggle() {
   }
 }
 
-void handleReservedToggle() {
-  Serial.print(F("RESERVED: "));
-  Serial.println(reservedToggleState ? F("ON") : F("OFF"));
+void handleProductionToggle() {
+  productionMode = !productionToggleState; // Inverted logic: switch ON = production OFF
+  Serial.print(F("PRODUCTION MODE: "));
+  Serial.println(productionMode ? F("ON - State Cycling") : F("OFF - Continuous Demo"));
+  
+  if (!productionMode) {
+    Serial.println(F("Demo: All systems active"));
+  } else {
+    // Reset production mode state when switching back on
+    currentProductionState = PROD_DORMANT;
+    productionStateStartTime = millis();
+    productionStateDuration = random(120000, 600000);
+    Serial.println(F("Production: Reset to dormant"));
+  }
 }
 
 void homeAllServos() {
@@ -375,22 +437,6 @@ void blinkOrangeRapid() {
   }
 }
 
-void updateShowOffMode() {
-  if (showOffModeActive) {
-    unsigned long now = millis();
-    if (now - showOffModeStartTime >= showOffModeDuration) {
-      showOffModeActive = false;
-      Serial.println(F("Show Off complete"));
-      
-      if (productionMode) {
-        currentProductionState = PROD_DORMANT;
-        productionStateStartTime = now;
-        productionStateDuration = random(120000, 600000);
-      }
-    }
-  }
-}
-
 void printHardwareStatus() {
   static unsigned long lastStatusPrint = 0;
   unsigned long now = millis();
@@ -399,7 +445,7 @@ void printHardwareStatus() {
     Serial.println(F("=== Status ==="));
     Serial.print(F("Muted: ")); Serial.println(audioMuted ? F("YES") : F("NO"));
     Serial.print(F("Homed: ")); Serial.println(servosHomed ? F("YES") : F("NO"));
-    Serial.print(F("Show: ")); Serial.println(showOffModeActive ? F("ON") : F("OFF"));
+    Serial.print(F("Production: ")); Serial.println(productionMode ? F("ON") : F("OFF"));
     Serial.print(F("Stop: ")); Serial.println(stopAllActive ? F("ON") : F("OFF"));
     Serial.println(F("============="));
     lastStatusPrint = now;
@@ -498,11 +544,15 @@ void initializeDFPlayer() {
     myDFPlayer.volume(30);  // Set to maximum volume
     myDFPlayer.EQ(0);       // Normal EQ
     
-    // Check file count
-    delay(1000);
-    int fileCount = myDFPlayer.readFileCounts();
-    Serial.print(F("Audio files detected: "));
-    Serial.println(fileCount);
+    // Only check file count if not muted (avoids delays during muted startup)
+    if (!audioMuted) {
+      delay(1000);
+      int fileCount = myDFPlayer.readFileCounts();
+      Serial.print(F("Audio files detected: "));
+      Serial.println(fileCount);
+    } else {
+      Serial.println(F("Skipping file count check - audio muted"));
+    }
   }
 }
 
@@ -510,6 +560,8 @@ void playStartupAudio() {
   if (!audioMuted) {
     Serial.println(F("Playing startup audio..."));
     myDFPlayer.play(1);  // Play 001.mp3
+  } else {
+    Serial.println(F("Startup audio muted by switch"));
   }
 }
 
@@ -765,11 +817,6 @@ void startupSequence() {
 void updateProductionMode() {
   unsigned long now = millis();
   
-  // Don't update production mode if show off mode is active
-  if (showOffModeActive) {
-    return;
-  }
-  
   // Check if it's time to change states
   if (now - productionStateStartTime >= productionStateDuration) {
     productionStateStartTime = now;
@@ -864,6 +911,22 @@ void setup() {
   Serial.begin(115200);
   Serial.println(F("Starting IG-12"));
 
+  // Initialize hardware control pins FIRST
+  pinMode(whiteButtonPin, INPUT_PULLUP);
+  pinMode(redButtonPin, INPUT_PULLUP);
+  pinMode(muteTogglePin, INPUT_PULLUP);
+  pinMode(homeTogglePin, INPUT_PULLUP);
+  pinMode(productionTogglePin, INPUT_PULLUP);
+  
+  // Read mute switch state BEFORE any audio initialization
+  audioMuted = !digitalRead(muteTogglePin);
+  
+  if (audioMuted) {
+    Serial.println(F("STARTUP: Audio muted by switch"));
+  } else {
+    Serial.println(F("STARTUP: Audio enabled"));
+  }
+
   // Initialize servos
   chinPanServo.attach(chinPanPin);
   eyePanServo.attach(eyePanPin);
@@ -875,31 +938,27 @@ void setup() {
   pixels.show();
   pixels.setBrightness(200);
 
-  // Initialize hardware control pins
-  pinMode(whiteButtonPin, INPUT_PULLUP);
-  pinMode(redButtonPin, INPUT_PULLUP);
-  pinMode(muteTogglePin, INPUT_PULLUP);
-  pinMode(homeTogglePin, INPUT_PULLUP);
-  pinMode(reservedTogglePin, INPUT_PULLUP);
-
-  // Run startup sequence
+  // Run startup sequence (now respects mute state)
   startupSequence();
 
+  // Read production mode switch after startup
+  productionMode = !digitalRead(productionTogglePin);
+  
   // Initialize production mode
   if (productionMode) {
-    Serial.println(F("Production Mode"));
+    Serial.println(F("Production Mode: ON"));
     currentProductionState = PROD_DORMANT;
     productionStateStartTime = millis();
     productionStateDuration = random(120000, 600000);
     lastDormantSweepTime = millis();
     lastSensorHomeTime = millis();
   } else {
-    Serial.println(F("Normal Mode"));
+    Serial.println(F("Production Mode: OFF - Continuous Demo"));
   }
   
   Serial.println(F("Commands: 1-9,s,p,v#,+/-"));
-  Serial.println(F("White(A1):Show Red(A2):Stop"));
-  Serial.println(F("A3:Mute A4:Home A5:Reserved"));
+  Serial.println(F("White(A1):Restart Red(A2):Stop"));
+  Serial.println(F("A3:Mute A4:Home A5:Production"));
   Serial.println(F("Wire switches to pin+GND"));
 }
 
@@ -917,9 +976,6 @@ void loop() {
   
   // Print hardware status periodically
   printHardwareStatus();
-  
-  // Update show off mode timer
-  updateShowOffMode();
   
   // If STOP ALL is active, do nothing else
   if (stopAllActive) {
