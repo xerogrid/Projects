@@ -1,5 +1,6 @@
-// All Credit for original code and code format goes to xyz.
+// All Credit for original code and code format goes to DroidDivision User.
 // Thanks for the inspiration.
+// All code is running on Arduino Nano ATMega328P
 
 //////////////////////////////////////////
 //                                      //
