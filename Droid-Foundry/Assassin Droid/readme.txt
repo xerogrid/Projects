@@ -1,50 +1,116 @@
-# Assassin Droid - SwitchesRunning.cpp
+# Assassin Droid - FinalVersionLondon.cpp
 
-## Overview
-The `SwitchesRunning.cpp` file is responsible for managing the logic and behavior of the switches that control various functions of the Assassin Droid. This includes monitoring the state of physical switches, executing corresponding actions, and ensuring proper operation of the droid's systems.
-
-### Functions in SwitchesRunning.cpp
-1. **initializeSwitches()**  
-    Sets up the pins and initializes the switches for operation. This function ensures that all switches are ready for use when the droid is powered on.
-
-2. **readSwitchStates()**  
-    Continuously monitors the state of each switch and updates the internal logic accordingly. This function is critical for detecting user input and triggering appropriate actions.
-
-3. **executeSwitchActions()**  
-    Executes specific actions based on the current state of the switches. For example, activating weapons, changing movement modes, or powering down the droid.
-
-4. **debounceSwitch()**  
-    Implements a debounce mechanism to prevent false readings caused by mechanical noise or rapid toggling of switches.
-
-5. **shutdownSequence()**  
-    Handles the shutdown process when a specific switch is activated, ensuring all systems are safely powered down.
+<Explanation of various logic used in code should go here once overall readme is in a good state>
 
 ---
+
+### General Notes
+
+
+Servos:
+Buttom (ChinPan) Servo is a 270° hobby servo. 
+Mid-Drive Plate Servo is a 270° hobby servo. 
+Turret Servo is a 90° servo. (FS90R)
+Top Servo is a 270° servo.
+
+LEDs:
+11x Individual NeoPixels with 57mm wiring connects.
+
+
+---
+
+## Wiring Diagram (Head)
+
+The following information includes the wiring color I used and terminal connect data. 
+This can be whatever you prefer but ensure you wire consistent with this layout or modify the code accordingly.
+Signal wires are direct to Nano pins/terminals, power go to Servo Control Board.
+
+D2
+Bottom Servo
+White wire
+26" wires
+
+D3
+Mid Drive Plate
+Blue Wire
+31" wires
+
+D4
+Turret
+Yellow Wire
+33" wires
+
+D5
+Top Servo
+Green Wire
+37" wires
+
+D6
+NeoPixels/LEDs
+Pink wire
+37"
+
+Servo Power +/-
+Each respective +/- from servos should be appropriately terminated and wired to the installed Servo Breakout Board on the power leads.
+// Remember to include a diagram here
+
+
+
+
+## Wiring Diagram (Cockpit Switches)
+
+The following information includes the wiring color I used and terminal connect data. 
+This can be whatever you prefer but ensure you wire consistent with this layout or modify the code accordingly.
+
+A1
+State Change Button (Momentary keyswitch)
+Yellow wire
+20" wire
+
+A2
+Stop All Systems (Momentary keyswitch)
+Green Wire
+20" wire
+
+A3
+Mute Toggle (Toggle Switch)
+White Wire
+20" wire
+
+A4
+Home Servos (Toggle Switch)
+Blue Wire
+20" wire
+
+A5
+Production Mode (Toggle Switch)
+Pink wire
+20"
+
 
 ## Physical Assembly Instructions
 
 ### Required Components
-- Assassin Droid chassis
-- Microcontroller (e.g., Arduino or similar)
+- Assassin Droid chassis (IG12 version, purchased from Droid Division)
+- Microcontroller (An Arduino Nano was used for this code and build)
 - Toggle switches (quantity depends on the number of functions)
-- Jumper wires
-- Resistors (for pull-down or pull-up configurations)
-- Breadboard or soldering tools (optional)
+- Momentary button switches (quantity depends on the number of functions)
+- Brendan's custom IG-12 Powerpack (eventual download link will go here)
 
-### Assembly Steps
-1. **Mount the Switches**  
-    Securely attach the toggle switches to the droid's chassis in accessible locations. Ensure they are firmly fixed to avoid accidental disconnections during operation.
 
-2. **Wire the Switches**  
-    - Connect one terminal of each switch to the microcontroller's digital input pins.
-    - Use pull-up or pull-down resistors to stabilize the signal. For pull-up configuration, connect the resistor between the input pin and the microcontroller's power supply. For pull-down, connect it between the input pin and ground.
+Head Wiring and Assembly
 
-3. **Connect Power**  
-    Ensure the microcontroller and switches are powered correctly. Double-check all connections to avoid short circuits.
+# Most of this is just follow existing Droid Division assembly instructions for Animatronic IG Head.
 
-4. **Test the Wiring**  
-    Before running the code, test each switch manually to confirm proper wiring and functionality. Use a multimeter if necessary.
+##
 
----
+1. Install various servos in head components. DO NOT install servo horns/gears yet.
+2. Pull all servo/LED wiring looms through center tube and pull relevant connector through relevant hole (wires noted above to relevant servo)
+3. Begin assembling head, starting with the chin.
+4. Wire servos as you go, ensuring ample wiring slack and no binding loops.
+5. If done correctly the head should be assembled, and free spinning, with all wires coming out the bottom.
 
-## Wiring Diagram
+
+Powerpack Wiring and Assembly
+
+1. 
