@@ -309,6 +309,7 @@ void handleWhiteButtonPress() {
       Serial.println(F("Restart: Full Active"));
       
       // Play restart audio
+      // THIS IS THE BUG WHEN PUSHING WHITE BUTTON
       if (!audioMuted) {
         playAudioFile(2); // Greeting audio
       }
