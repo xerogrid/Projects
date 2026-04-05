@@ -1,0 +1,42 @@
+{
+  "$schema": "https://schemas.elgato.com/streamdeck/plugins/manifest.json",
+  "Author": "BambuLabs VLC Streams",
+  "CodePath": "bin/plugin.js",
+  "Description": "Detects active BambuLabs 3D printer RTSP streams and opens each one in a VLC window arranged in quadrant layout on your Windows 11 display.",
+  "Icon": "imgs/plugin/icon",
+  "Name": "BambuLabs VLC Streams",
+  "Version": "1.0.0",
+  "SDKVersion": 2,
+  "Software": {
+    "MinimumVersion": "6.4"
+  },
+  "OS": [
+    {
+      "Platform": "windows",
+      "MinimumVersion": "11"
+    }
+  ],
+  "NodeJS": {
+    "Version": "20",
+    "Debug": "enabled"
+  },
+  "Actions": [
+    {
+      "UUID": "com.bambu.vlcstreams.openstreams",
+      "Name": "Open Printer Streams",
+      "Tooltip": "Launches VLC with all active BambuLabs printer streams in quadrant windows",
+      "Icon": "imgs/actions/open-streams/icon",
+      "States": [
+        {
+          "Image": "imgs/actions/open-streams/key/default",
+          "Name": "Open Streams"
+        }
+      ],
+      "Controllers": ["Keypad"],
+      "DisableCaching": false,
+      "SupportedInMultiActions": true
+    }
+  ],
+  "Category": "3D Printing",
+  "CategoryIcon": "imgs/plugin/icon"
+}

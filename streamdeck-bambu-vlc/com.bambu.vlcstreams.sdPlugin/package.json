@@ -1,0 +1,17 @@
+{
+  "name": "com.bambu.vlcstreams",
+  "version": "1.0.0",
+  "description": "Stream Deck plugin – open BambuLabs printer streams in VLC quadrant windows",
+  "main": "bin/plugin.js",
+  "type": "module",
+  "scripts": {
+    "build": "node --experimental-vm-modules bin/plugin.js",
+    "dev": "node bin/plugin.js"
+  },
+  "dependencies": {
+    "@elgato/streamdeck": "^0.6.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

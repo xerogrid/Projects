@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 72" width="72" height="72">
+  <rect width="72" height="72" rx="8" fill="#1a1a2e"/>
+
+  <!-- 2x2 quadrant screens -->
+  <rect x="4"  y="4"  width="29" height="29" rx="3" fill="#0a2744" stroke="#00aaff" stroke-width="1.5"/>
+  <rect x="39" y="4"  width="29" height="29" rx="3" fill="#0a2744" stroke="#00aaff" stroke-width="1.5"/>
+  <rect x="4"  y="39" width="29" height="29" rx="3" fill="#0a2744" stroke="#ff6600" stroke-width="1.5"/>
+  <rect x="39" y="39" width="29" height="29" rx="3" fill="#0a2744" stroke="#ff6600" stroke-width="1.5"/>
+
+  <!-- Play arrows -->
+  <polygon points="10,12 10,24 22,18" fill="#00aaff"/>
+  <polygon points="45,12 45,24 57,18" fill="#00aaff"/>
+  <polygon points="10,47 10,59 22,53" fill="#ff6600"/>
+  <polygon points="45,47 45,59 57,53" fill="#ff6600"/>
+</svg>
