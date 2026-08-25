@@ -11,7 +11,38 @@
   <body>
     <main class="signage" aria-label="Fulcrum Builds convention sign">
       <div class="ambient-glow" aria-hidden="true"></div>
-      <div class="grid-floor" aria-hidden="true"></div>
+      <svg
+        class="grid-floor"
+        viewBox="0 0 1920 600"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+      >
+        <defs>
+          <linearGradient id="grid-fade" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#40f4ff" stop-opacity="0" />
+            <stop offset="0.25" stop-color="#40f4ff" stop-opacity="0.4" />
+            <stop offset="1" stop-color="#40f4ff" stop-opacity="0.75" />
+          </linearGradient>
+          <filter id="grid-glow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+        <g class="grid-lines">
+          <path d="M960 0 L-180 600 M960 0 L150 600 M960 0 L520 600 M960 0 L750 600" />
+          <path d="M960 0 L2100 600 M960 0 L1770 600 M960 0 L1400 600 M960 0 L1170 600" />
+          <path d="M820 72 H1100 M730 145 H1190 M610 230 H1310 M430 330 H1490 M180 450 H1740 M-120 590 H2040" />
+        </g>
+        <g class="grid-runners" filter="url(#grid-glow)">
+          <line x1="760" x2="1160" y1="0" y2="0" style="--delay: 0s" />
+          <line x1="760" x2="1160" y1="0" y2="0" style="--delay: -0.7s" />
+          <line x1="760" x2="1160" y1="0" y2="0" style="--delay: -1.4s" />
+          <line x1="760" x2="1160" y1="0" y2="0" style="--delay: -2.1s" />
+        </g>
+      </svg>
 
       <svg
         class="circuit-board"
