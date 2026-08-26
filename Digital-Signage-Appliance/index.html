@@ -3,204 +3,136 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#02050a" />
+    <meta name="theme-color" content="#000000" />
     <title>Fulcrum Builds</title>
     <link rel="icon" href="data:," />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="minimal.css" />
   </head>
   <body>
     <main class="signage" aria-label="Fulcrum Builds convention sign">
-      <div class="ambient-glow" aria-hidden="true"></div>
-      <svg
-        class="grid-floor"
-        viewBox="0 0 1920 600"
-        preserveAspectRatio="none"
-        aria-hidden="true"
-      >
-        <defs>
-          <linearGradient id="grid-fade" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#40f4ff" stop-opacity="0" />
-            <stop offset="0.25" stop-color="#40f4ff" stop-opacity="0.4" />
-            <stop offset="1" stop-color="#40f4ff" stop-opacity="0.75" />
-          </linearGradient>
-          <filter id="grid-glow" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="3" result="blur" />
-            <feMerge>
-              <feMergeNode in="blur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-        </defs>
-        <g class="grid-lines">
-          <path d="M960 0 L-180 600 M960 0 L150 600 M960 0 L520 600 M960 0 L750 600" />
-          <path d="M960 0 L2100 600 M960 0 L1770 600 M960 0 L1400 600 M960 0 L1170 600" />
-          <path d="M820 72 H1100 M730 145 H1190 M610 230 H1310 M430 330 H1490 M180 450 H1740 M-120 590 H2040" />
-        </g>
-        <g class="grid-runners" filter="url(#grid-glow)">
-          <line x1="760" x2="1160" y1="0" y2="0" style="--delay: 0s" />
-          <line x1="760" x2="1160" y1="0" y2="0" style="--delay: -0.7s" />
-          <line x1="760" x2="1160" y1="0" y2="0" style="--delay: -1.4s" />
-          <line x1="760" x2="1160" y1="0" y2="0" style="--delay: -2.1s" />
-        </g>
-      </svg>
-
-      <svg
-        class="circuit-board"
-        viewBox="0 0 1920 1080"
-        preserveAspectRatio="xMidYMid slice"
-        aria-hidden="true"
-      >
-        <defs>
-          <filter id="cyan-glow" x="-80%" y="-80%" width="260%" height="260%">
-            <feGaussianBlur stdDeviation="5" result="blur" />
-            <feMerge>
-              <feMergeNode in="blur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-          <filter id="orange-glow" x="-80%" y="-80%" width="260%" height="260%">
-            <feGaussianBlur stdDeviation="4" result="blur" />
-            <feMerge>
-              <feMergeNode in="blur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-          <linearGradient id="trace-gradient" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stop-color="#087998" />
-            <stop offset="0.5" stop-color="#45f4ff" />
-            <stop offset="1" stop-color="#087998" />
-          </linearGradient>
-        </defs>
-
-        <g class="trace-layer trace-layer--cyan">
-          <path d="M0 118 H270 L332 180 H575" />
-          <path d="M0 172 H190 L260 242 H430" />
-          <path d="M1920 98 H1660 L1594 164 H1440" />
-          <path d="M1920 154 H1740 L1684 210 H1532" />
-          <path d="M0 730 H230 L316 644 H485" />
-          <path d="M1920 720 H1690 L1608 638 H1450" />
-          <path d="M85 1080 V926 L146 865 H315" />
-          <path d="M1835 1080 V930 L1772 867 H1605" />
+      <svg class="pcb-silkscreen" viewBox="0 0 1280 800" preserveAspectRatio="none" aria-hidden="true">
+        <g class="board-edge">
+          <path d="M18 74 V18 H112 M1168 18 H1262 V86 M1262 714 V782 H1168 M112 782 H18 V714" />
+          <path d="M32 104 H118 M1162 104 H1248 M32 696 H118 M1162 696 H1248" />
         </g>
 
-        <g class="trace-layer trace-layer--orange">
-          <path d="M0 275 H150 L212 337 H360" />
-          <path d="M1920 292 H1770 L1710 352 H1582" />
-          <path d="M0 810 H130 L204 884 H395" />
-          <path d="M1920 808 H1790 L1718 880 H1535" />
+        <g class="component-outlines">
+          <rect x="468" y="492" width="344" height="178" rx="8" />
+          <path d="M620 492 A20 20 0 0 0 660 492" />
+          <path d="M448 516 H468 M448 542 H468 M448 568 H468 M448 594 H468 M448 620 H468 M448 646 H468" />
+          <path d="M812 516 H832 M812 542 H832 M812 568 H832 M812 594 H832 M812 620 H832 M812 646 H832" />
+
+          <rect x="66" y="388" width="146" height="54" rx="5" />
+          <path d="M38 415 H66 M212 415 H240" />
+          <circle cx="86" cy="415" r="8" />
+          <circle cx="192" cy="415" r="8" />
+
+          <rect x="1012" y="316" width="166" height="62" rx="5" />
+          <path d="M984 347 H1012 M1178 347 H1206" />
+          <circle cx="1034" cy="347" r="8" />
+          <circle cx="1156" cy="347" r="8" />
+
+          <circle cx="362" cy="570" r="34" />
+          <circle cx="362" cy="570" r="21" />
+          <path d="M362 528 V542 M362 598 V612 M320 570 H334 M390 570 H404" />
+
+          <circle cx="932" cy="474" r="30" />
+          <path d="M932 438 V451 M932 497 V510 M896 474 H909 M955 474 H968" />
+
+          <rect x="1042" y="572" width="112" height="88" rx="4" />
+          <path d="M1062 572 V552 M1086 572 V552 M1110 572 V552 M1134 572 V552" />
+          <path d="M1062 660 V680 M1086 660 V680 M1110 660 V680 M1134 660 V680" />
         </g>
 
-        <g class="node-layer">
-          <circle cx="270" cy="118" r="7" />
-          <circle cx="430" cy="242" r="7" />
-          <circle cx="1660" cy="98" r="7" />
-          <circle cx="1532" cy="210" r="7" />
-          <circle cx="316" cy="644" r="7" />
-          <circle cx="1608" cy="638" r="7" />
-          <circle cx="146" cy="865" r="7" />
-          <circle cx="1772" cy="867" r="7" />
+        <g class="silkscreen-labels">
+          <text x="482" y="518">U01 / MOTION CONTROL</text>
+          <text x="482" y="650">FULCRUM PCB · REV A</text>
+          <text x="66" y="378">R12</text>
+          <text x="1012" y="306">R27</text>
+          <text x="328" y="622">C07</text>
+          <text x="902" y="525">C11</text>
+          <text x="1042" y="704">J04</text>
+          <text x="42" y="762">FB-CTRL-01</text>
+          <text x="1104" y="762">2026.08</text>
+        </g>
+
+        <g class="silkscreen-vias">
+          <circle cx="286" cy="514" r="4" />
+          <circle cx="416" cy="724" r="4" />
+          <circle cx="860" cy="416" r="4" />
+          <circle cx="976" cy="728" r="4" />
+          <circle cx="1188" cy="440" r="4" />
+          <circle cx="80" cy="492" r="4" />
+          <circle cx="738" cy="724" r="4" />
+          <circle cx="888" cy="584" r="4" />
         </g>
       </svg>
 
-      <header class="brand">
-        <span class="brand__bracket" aria-hidden="true"></span>
-        <div class="brand__copy">
-          <p class="brand__label">Maker showcase</p>
-          <p class="brand__name">Fulcrum Builds</p>
-        </div>
-        <span class="brand__signal" aria-hidden="true">
-          <i></i><i></i><i></i>
-        </span>
-      </header>
+      <svg class="traces" viewBox="0 0 1280 800" preserveAspectRatio="none" aria-hidden="true">
+        <g class="trace-lines">
+          <path d="M0 44 H94 V78" />
+          <path d="M273 0 V26" />
 
-      <section class="hero">
-        <div class="hero__copy">
-          <p class="hero__kicker">
-            <span aria-hidden="true"></span>
-            Animatronic droids online
-          </p>
-          <h1>
-            <span class="hero__line">Ask me about</span>
-            <span class="hero__line hero__line--accent">my robots</span>
-          </h1>
-          <div class="photo-callout">
-            <span class="photo-callout__corner photo-callout__corner--left" aria-hidden="true"></span>
-            <span class="photo-callout__dot" aria-hidden="true"></span>
-            <strong>Photo ops welcome</strong>
-            <span class="photo-callout__dot" aria-hidden="true"></span>
-            <span class="photo-callout__corner photo-callout__corner--right" aria-hidden="true"></span>
-          </div>
-        </div>
+          <path d="M0 196 H158 V334 H74" />
+          <path d="M158 196 H210 V140" />
 
-        <div class="machine" aria-hidden="true">
-          <div class="machine__halo"></div>
-          <svg class="machine__assembly" viewBox="0 0 560 560">
-            <defs>
-              <radialGradient id="core-fill">
-                <stop offset="0" stop-color="#bfffff" />
-                <stop offset="0.18" stop-color="#2ee9ff" />
-                <stop offset="0.55" stop-color="#087a9a" />
-                <stop offset="1" stop-color="#02050a" />
-              </radialGradient>
-              <filter id="machine-glow" x="-80%" y="-80%" width="260%" height="260%">
-                <feGaussianBlur stdDeviation="7" result="blur" />
-                <feMerge>
-                  <feMergeNode in="blur" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
-            </defs>
+          <path d="M365 132 V358 H315 V414 H250" />
+          <path d="M365 358 H422 V460" />
 
-            <g class="gear gear--outer">
-              <circle cx="280" cy="280" r="208" />
-              <circle class="gear__teeth" cx="280" cy="280" r="230" />
-              <circle class="gear__inner" cx="280" cy="280" r="176" />
-            </g>
+          <path d="M602 132 V190 H547 V246" />
+          <path d="M602 190 H670" />
+          <path d="M602 225 H690" />
 
-            <g class="gear gear--middle">
-              <circle cx="280" cy="280" r="142" />
-              <circle class="gear__teeth" cx="280" cy="280" r="157" />
-              <circle class="gear__inner" cx="280" cy="280" r="112" />
-            </g>
+          <path d="M1280 132 H914 V265" />
+          <path d="M914 201 H792 V168" />
+          <path d="M914 223 H824" />
 
-            <g class="rotor">
-              <path d="M280 112 L307 226 L448 280 L307 334 L280 448 L253 334 L112 280 L253 226 Z" />
-              <circle cx="280" cy="280" r="76" />
-            </g>
+          <path d="M0 548 H142 V612 H228" />
+          <path d="M0 730 H180 V680 H300" />
+          <path d="M228 612 V560 H302" />
 
-            <g class="core" filter="url(#machine-glow)">
-              <circle cx="280" cy="280" r="52" />
-              <circle cx="280" cy="280" r="26" />
-              <circle class="core__light" cx="280" cy="280" r="12" />
-            </g>
+          <path d="M520 800 V700 H450 V620" />
+          <path d="M520 742 H650 V684" />
 
-            <g class="orbit orbit--one">
-              <circle cx="280" cy="52" r="8" />
-            </g>
-            <g class="orbit orbit--two">
-              <circle cx="478" cy="280" r="6" />
-            </g>
-          </svg>
-          <div class="machine__readout">
-            <span>Servo array</span>
-            <i></i>
-            <span>Active</span>
-          </div>
-        </div>
-      </section>
+          <path d="M742 800 V680 H810 V592" />
+          <path d="M810 680 H918" />
 
-      <footer class="topics">
-        <span>3D printing</span>
-        <i aria-hidden="true"></i>
-        <span>Making</span>
-        <i aria-hidden="true"></i>
-        <span>Arduino robotics</span>
-      </footer>
+          <path d="M1280 478 H1172 V536 H1086" />
+          <path d="M1280 730 H1104 V660 H1010" />
+          <path d="M1104 730 V780 H980" />
+        </g>
 
-      <div class="frame frame--top-left" aria-hidden="true"></div>
-      <div class="frame frame--top-right" aria-hidden="true"></div>
-      <div class="frame frame--bottom-left" aria-hidden="true"></div>
-      <div class="frame frame--bottom-right" aria-hidden="true"></div>
+        <g class="trace-pads">
+          <circle cx="94" cy="96" r="15" />
+          <circle cx="94" cy="96" r="5" />
+          <circle cx="273" cy="31" r="7" />
+          <circle cx="74" cy="334" r="9" />
+          <circle cx="210" cy="132" r="9" />
+          <circle cx="250" cy="414" r="9" />
+          <circle cx="422" cy="460" r="9" />
+          <circle cx="547" cy="246" r="9" />
+          <circle cx="670" cy="190" r="9" />
+          <circle cx="690" cy="225" r="9" />
+          <circle cx="914" cy="265" r="9" />
+          <circle cx="792" cy="168" r="9" />
+          <circle cx="824" cy="223" r="9" />
+          <circle cx="228" cy="612" r="9" />
+          <circle cx="300" cy="680" r="9" />
+          <circle cx="302" cy="560" r="9" />
+          <circle cx="450" cy="620" r="9" />
+          <circle cx="650" cy="684" r="9" />
+          <circle cx="810" cy="592" r="9" />
+          <circle cx="918" cy="680" r="9" />
+          <circle cx="1086" cy="536" r="9" />
+          <circle cx="1010" cy="660" r="9" />
+          <circle cx="980" cy="780" r="9" />
+        </g>
+      </svg>
+
+      <h1 class="brand" aria-label="Fulcrum Builds">
+        <span>Fulcrum</span>
+        <span>Builds</span>
+      </h1>
     </main>
 
     <script src="app.js"></script>

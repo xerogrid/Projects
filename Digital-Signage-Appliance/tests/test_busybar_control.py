@@ -26,6 +26,8 @@ class BusyBarControlTests(unittest.TestCase):
             [types.DisplayName.FRONT, types.DisplayName.BACK],
         )
         self.assertEqual([element.width for element in payload.elements], [72, 160])
+        self.assertTrue(all(element.x == 0 for element in payload.elements))
+        self.assertTrue(all(element.align == "top_left" for element in payload.elements))
 
     def test_signage_payload_contains_booth_copy(self) -> None:
         payload = busybar_control.build_signage_payload()
@@ -38,6 +40,8 @@ class BusyBarControlTests(unittest.TestCase):
         self.assertIn("FULCRUM BUILDS", text)
         self.assertIn("ASK ME ABOUT MY ROBOTS", text)
         self.assertEqual(payload.led_notification_color, "#FF982AFF")
+        self.assertTrue(all(element.x == 0 for element in payload.elements))
+        self.assertTrue(all(element.align == "top_left" for element in payload.elements))
 
     def test_missing_token_fails_without_contacting_api(self) -> None:
         stderr = io.StringIO()

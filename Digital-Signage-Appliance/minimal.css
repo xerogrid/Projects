@@ -1,0 +1,218 @@
+@font-face {
+  font-family: "Oxanium";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("assets/fonts/oxanium-latin-700-normal.woff2") format("woff2");
+}
+
+:root {
+  color-scheme: dark;
+  --drift-x: 0px;
+  --drift-y: 0px;
+  --trace: #4dbb55;
+  --trace-shadow: #102f15;
+  font-family: "Oxanium", "Arial Black", Impact, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #000;
+}
+
+body {
+  user-select: none;
+}
+
+.signage {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  color: #d8d8d2;
+  background:
+    radial-gradient(circle at 26% 38%, rgba(24, 43, 31, 0.18), transparent 31%),
+    radial-gradient(circle at 78% 72%, rgba(21, 37, 27, 0.16), transparent 34%),
+    repeating-linear-gradient(0deg, transparent 0 4px, rgba(255, 255, 255, 0.007) 5px),
+    #010201;
+  transform: translate(var(--drift-x), var(--drift-y)) scale(1.004);
+  transition: transform 8s linear;
+}
+
+.pcb-silkscreen {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.9s ease 0.2s;
+}
+
+.pcb-silkscreen path,
+.pcb-silkscreen rect,
+.pcb-silkscreen circle {
+  vector-effect: non-scaling-stroke;
+}
+
+.board-edge,
+.component-outlines {
+  fill: none;
+  stroke: #202b23;
+  stroke-width: 2.5;
+}
+
+.board-edge {
+  stroke: #29372d;
+  stroke-width: 3;
+}
+
+.component-outlines circle {
+  fill: rgba(15, 22, 17, 0.7);
+}
+
+.silkscreen-labels {
+  fill: #314034;
+  font-family: "Oxanium", monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+}
+
+.silkscreen-vias {
+  fill: #182019;
+  stroke: #3a4c3e;
+  stroke-width: 1.5;
+}
+
+.is-ready .pcb-silkscreen {
+  opacity: 0.96;
+}
+
+.traces {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  opacity: 0;
+  transition: opacity 0.8s ease 0.15s;
+}
+
+.trace-lines {
+  fill: none;
+  stroke: var(--trace);
+  stroke-width: 7;
+  stroke-linecap: square;
+  stroke-linejoin: bevel;
+  filter: drop-shadow(0 3px 0 var(--trace-shadow));
+}
+
+.trace-lines path,
+.trace-pads circle {
+  vector-effect: non-scaling-stroke;
+}
+
+.trace-pads circle {
+  fill: #000;
+  stroke: var(--trace);
+  stroke-width: 6;
+}
+
+.trace-pads circle:nth-child(2) {
+  fill: var(--trace);
+  stroke: none;
+}
+
+.is-ready .traces {
+  opacity: 0.92;
+}
+
+.brand {
+  position: absolute;
+  z-index: 2;
+  top: clamp(2.5rem, 8vh, 7rem);
+  left: 50%;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.32em;
+  width: max-content;
+  max-width: 90vw;
+  margin: 0;
+  color: #dfe3dc;
+  font-family: "Oxanium", "Arial Black", Impact, sans-serif;
+  font-size: clamp(2.6rem, 6vw, 7.5rem);
+  font-weight: 700;
+  font-style: normal;
+  line-height: 0.9;
+  letter-spacing: 0.13em;
+  text-align: center;
+  text-transform: uppercase;
+  white-space: nowrap;
+  -webkit-text-stroke: 1px #edf1ea;
+  text-shadow:
+    0 2px 0 #5c685f,
+    0 5px 0 #111511;
+  opacity: 0;
+  transform: translate(-50%, -0.3em);
+  transition:
+    opacity 0.7s ease,
+    transform 0.9s cubic-bezier(0.2, 0.75, 0.25, 1);
+}
+
+.brand span:first-child {
+  letter-spacing: 0.1em;
+}
+
+.brand span:last-child {
+  color: #aeb9b0;
+  letter-spacing: 0.18em;
+}
+
+.is-ready .brand {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+@media (max-width: 700px) {
+  .brand {
+    gap: 0.2em;
+    font-size: clamp(2rem, 8vw, 4rem);
+    letter-spacing: 0.06em;
+  }
+
+  .brand span:last-child {
+    letter-spacing: 0.1em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+body[data-static="true"] *,
+body[data-static="true"] *::before,
+body[data-static="true"] *::after {
+  animation-play-state: paused !important;
+  transition-delay: 0s !important;
+  transition-duration: 0s !important;
+}

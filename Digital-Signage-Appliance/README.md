@@ -8,12 +8,10 @@ This project is independent of the BambuLabs VLC and Stream Deck work.
 ## Sign content
 
 - Fulcrum Builds
-- Ask me about my robots
-- Photo ops welcome
-- 3D Printing · Making · Arduino Robotics
 
-The design combines industrial machinery, gears, and circuit traces with an
-original neon-grid aesthetic. It does not use franchise logos or visual assets.
+The current design is intentionally stripped back to a mechanically styled,
+top-centered company name and matte green circuit traces on a black silkscreen
+PCB background.
 
 ## Preview
 
@@ -45,11 +43,15 @@ added once the target Raspberry Pi OS version is confirmed.
 ## Current implementation
 
 - Responsive 16:9 HTML layout
-- CSS perspective grid and OLED-friendly dark palette
-- Animated SVG gears, rotor, circuits, and status lights
+- OLED-friendly black PCB background with charcoal silkscreen markings
+- Top-centered mechanical wordmark using a self-hosted Oxanium font
+- Matte green circuit traces and terminal pads distributed around the frame
 - Periodic pixel drift to reduce static OLED wear
 - Reduced-motion support
 - No external web assets or signage runtime dependencies
+
+Oxanium is distributed under the SIL Open Font License 1.1; its license is
+included at `assets/fonts/OFL.txt`.
 
 ## Remote BUSY Bar control
 
