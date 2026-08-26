@@ -28,6 +28,9 @@ class BusyBarControlTests(unittest.TestCase):
         self.assertEqual([element.width for element in payload.elements], [72, 160])
         self.assertTrue(all(element.x == 0 for element in payload.elements))
         self.assertTrue(all(element.align == "top_left" for element in payload.elements))
+        self.assertTrue(
+            all(element.scroll_rate == busybar_control.SCROLL_RATE for element in payload.elements)
+        )
 
     def test_signage_payload_contains_booth_copy(self) -> None:
         payload = busybar_control.build_signage_payload()
@@ -42,6 +45,13 @@ class BusyBarControlTests(unittest.TestCase):
         self.assertEqual(payload.led_notification_color, "#FF982AFF")
         self.assertTrue(all(element.x == 0 for element in payload.elements))
         self.assertTrue(all(element.align == "top_left" for element in payload.elements))
+        self.assertTrue(
+            all(
+                element.scroll_rate == busybar_control.SCROLL_RATE
+                for element in payload.elements
+                if element.scroll_rate is not None
+            )
+        )
 
     def test_printout_payload_contains_live_activity(self) -> None:
         payload = busybar_control.build_printout_payload(
@@ -62,6 +72,14 @@ class BusyBarControlTests(unittest.TestCase):
             [element.display for element in payload.elements],
             [types.DisplayName.FRONT, types.DisplayName.BACK, types.DisplayName.BACK],
         )
+        self.assertTrue(
+            all(
+                element.scroll_rate == busybar_control.SCROLL_RATE
+                for element in payload.elements
+                if element.scroll_rate is not None
+            )
+        )
+        self.assertGreater(busybar_control.SCROLL_RATE, 800)
 
     def test_missing_token_fails_without_contacting_api(self) -> None:
         stderr = io.StringIO()

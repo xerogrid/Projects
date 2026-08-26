@@ -17,6 +17,10 @@ APPLICATION_NAME = "fulcrum-builds-signage"
 TOKEN_ENV_VAR = "BUSYBAR_API_TOKEN"
 DEFAULT_COLOR = "#40F4FFFF"
 ACCENT_COLOR = "#FF982AFF"
+# Firmware examples use 800 (pixels per minute). 2400 is about 3x that.
+SCROLL_RATE = 2400
+SCROLL_START_DELAY_MS = 200
+SCROLL_REPEAT_DELAY_MS = 400
 DISPLAY_WIDTHS = {
     types.DisplayName.FRONT: 72,
     types.DisplayName.BACK: 160,
@@ -76,9 +80,9 @@ def build_message_payload(
                 y=1,
                 width=DISPLAY_WIDTHS[display_name],
                 align="top_left",
-                scroll_rate=800,
-                scroll_start_delay=1000,
-                scroll_repeat_delay=1200,
+                scroll_rate=SCROLL_RATE,
+                scroll_start_delay=SCROLL_START_DELAY_MS,
+                scroll_repeat_delay=SCROLL_REPEAT_DELAY_MS,
             )
         )
 
@@ -113,9 +117,9 @@ def build_printout_payload(
                 y=1,
                 width=DISPLAY_WIDTHS[types.DisplayName.FRONT],
                 align="top_left",
-                scroll_rate=700,
-                scroll_start_delay=400,
-                scroll_repeat_delay=800,
+                scroll_rate=SCROLL_RATE,
+                scroll_start_delay=SCROLL_START_DELAY_MS,
+                scroll_repeat_delay=SCROLL_REPEAT_DELAY_MS,
             ),
             types.TextElement(
                 id="printout-headline",
@@ -138,9 +142,9 @@ def build_printout_payload(
                 y=46,
                 width=DISPLAY_WIDTHS[types.DisplayName.BACK],
                 align="top_left",
-                scroll_rate=700,
-                scroll_start_delay=400,
-                scroll_repeat_delay=800,
+                scroll_rate=SCROLL_RATE,
+                scroll_start_delay=SCROLL_START_DELAY_MS,
+                scroll_repeat_delay=SCROLL_REPEAT_DELAY_MS,
             ),
         ],
     )
@@ -190,9 +194,9 @@ def build_signage_payload() -> types.DisplayElements:
                 y=1,
                 width=DISPLAY_WIDTHS[types.DisplayName.FRONT],
                 align="top_left",
-                scroll_rate=800,
-                scroll_start_delay=750,
-                scroll_repeat_delay=1000,
+                scroll_rate=SCROLL_RATE,
+                scroll_start_delay=SCROLL_START_DELAY_MS,
+                scroll_repeat_delay=SCROLL_REPEAT_DELAY_MS,
             ),
             types.TextElement(
                 id="back-title",
@@ -215,9 +219,9 @@ def build_signage_payload() -> types.DisplayElements:
                 y=46,
                 width=DISPLAY_WIDTHS[types.DisplayName.BACK],
                 align="top_left",
-                scroll_rate=800,
-                scroll_start_delay=1000,
-                scroll_repeat_delay=1200,
+                scroll_rate=SCROLL_RATE,
+                scroll_start_delay=SCROLL_START_DELAY_MS,
+                scroll_repeat_delay=SCROLL_REPEAT_DELAY_MS,
             ),
         ],
     )
