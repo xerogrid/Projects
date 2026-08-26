@@ -1,10 +1,18 @@
+@font-face {
+  font-family: "Oxanium";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("assets/fonts/oxanium-latin-700-normal.woff2") format("woff2");
+}
+
 :root {
   color-scheme: dark;
   --drift-x: 0px;
   --drift-y: 0px;
   --trace: #4dbb55;
   --trace-shadow: #102f15;
-  font-family: "Arial Black", Impact, "Arial Narrow", sans-serif;
+  font-family: "Oxanium", "Arial Black", Impact, sans-serif;
 }
 
 * {
@@ -33,9 +41,63 @@ body {
   height: 100vh;
   overflow: hidden;
   color: #d8d8d2;
-  background: #000;
+  background:
+    radial-gradient(circle at 26% 38%, rgba(20, 35, 26, 0.12), transparent 31%),
+    radial-gradient(circle at 78% 72%, rgba(17, 29, 22, 0.1), transparent 34%),
+    repeating-linear-gradient(0deg, transparent 0 4px, rgba(255, 255, 255, 0.004) 5px),
+    #010201;
   transform: translate(var(--drift-x), var(--drift-y)) scale(1.004);
   transition: transform 8s linear;
+}
+
+.pcb-silkscreen {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.9s ease 0.2s;
+}
+
+.pcb-silkscreen path,
+.pcb-silkscreen rect,
+.pcb-silkscreen circle {
+  vector-effect: non-scaling-stroke;
+}
+
+.board-edge,
+.component-outlines {
+  fill: none;
+  stroke: #151c17;
+  stroke-width: 2;
+}
+
+.board-edge {
+  stroke: #1b241d;
+  stroke-width: 3;
+}
+
+.component-outlines circle {
+  fill: rgba(10, 14, 11, 0.55);
+}
+
+.silkscreen-labels {
+  fill: #1d281f;
+  font-family: "Oxanium", monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+}
+
+.silkscreen-vias {
+  fill: #101611;
+  stroke: #263329;
+  stroke-width: 1.5;
+}
+
+.is-ready .pcb-silkscreen {
+  opacity: 0.82;
 }
 
 .traces {
@@ -90,19 +152,20 @@ body {
   width: max-content;
   max-width: 90vw;
   margin: 0;
-  color: #d8d8d2;
+  color: #dfe3dc;
+  font-family: "Oxanium", "Arial Black", Impact, sans-serif;
   font-size: clamp(2.6rem, 6vw, 7.5rem);
-  font-weight: 900;
+  font-weight: 700;
   font-style: normal;
   line-height: 0.9;
-  letter-spacing: 0.11em;
+  letter-spacing: 0.13em;
   text-align: center;
   text-transform: uppercase;
   white-space: nowrap;
-  -webkit-text-stroke: 1px #f3f3ee;
+  -webkit-text-stroke: 1px #edf1ea;
   text-shadow:
-    0 2px 0 #777772,
-    0 4px 0 #2b2b29;
+    0 2px 0 #5c685f,
+    0 5px 0 #111511;
   opacity: 0;
   transform: translate(-50%, -0.3em);
   transition:
@@ -111,12 +174,12 @@ body {
 }
 
 .brand span:first-child {
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
 }
 
 .brand span:last-child {
-  color: #aaa9a3;
-  letter-spacing: 0.16em;
+  color: #aeb9b0;
+  letter-spacing: 0.18em;
 }
 
 .is-ready .brand {
