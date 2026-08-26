@@ -53,6 +53,39 @@
               <feMergeNode in="SourceGraphic" />
             </feMerge>
           </filter>
+          <filter id="cable-shadow" x="-30%" y="-10%" width="160%" height="120%">
+            <feDropShadow dx="5" dy="7" stdDeviation="4" flood-color="#000000" flood-opacity="0.95" />
+          </filter>
+          <filter id="red-lamp-glow" x="-180%" y="-180%" width="460%" height="460%">
+            <feGaussianBlur stdDeviation="18" result="blur" />
+            <feFlood flood-color="#ff2d0a" flood-opacity="0.9" />
+            <feComposite in2="blur" operator="in" />
+            <feMerge>
+              <feMergeNode />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+          <filter id="blue-lamp-glow" x="-180%" y="-180%" width="460%" height="460%">
+            <feGaussianBlur stdDeviation="18" result="blur" />
+            <feFlood flood-color="#008cff" flood-opacity="0.92" />
+            <feComposite in2="blur" operator="in" />
+            <feMerge>
+              <feMergeNode />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+          <radialGradient id="red-bulb" cx="34%" cy="28%">
+            <stop offset="0" stop-color="#fff4d4" />
+            <stop offset="0.18" stop-color="#ffb02e" />
+            <stop offset="0.48" stop-color="#ff2b0b" />
+            <stop offset="1" stop-color="#5e0700" />
+          </radialGradient>
+          <radialGradient id="blue-bulb" cx="34%" cy="28%">
+            <stop offset="0" stop-color="#ffffff" />
+            <stop offset="0.18" stop-color="#69e8ff" />
+            <stop offset="0.48" stop-color="#008eff" />
+            <stop offset="1" stop-color="#001d6b" />
+          </radialGradient>
           <symbol id="chain-link" viewBox="0 0 94 48">
             <rect x="4" y="5" width="86" height="38" rx="19" fill="none" stroke="#171713" stroke-width="13" />
             <rect x="4" y="5" width="86" height="38" rx="19" fill="none" stroke="url(#chain-steel)" stroke-width="8" />
@@ -77,6 +110,37 @@
           <path d="M1450 894 H1680 V808 H1950" />
           <path class="rust-run" d="M-40 330 H250 Q292 330 292 372 V398 H535" />
           <path class="rust-run" d="M1484 910 H1701 V824 H1960" />
+        </g>
+
+        <g class="wire-harness" filter="url(#cable-shadow)">
+          <path class="wire wire--red" d="M1280 -80 C1262 140 1378 224 1328 432 S1206 720 1264 1140" />
+          <path class="wire wire--blue" d="M1372 -80 C1354 160 1472 254 1400 474 S1354 804 1426 1140" />
+          <path class="wire wire--yellow" d="M1460 -80 C1510 182 1418 304 1490 522 S1548 806 1518 1140" />
+          <path class="wire wire--white" d="M1535 -80 C1576 148 1500 330 1578 542 S1664 824 1598 1140" />
+          <path class="wire wire--red wire--thin" d="M1610 -80 C1560 180 1670 330 1624 566 S1602 854 1680 1140" />
+          <path class="wire wire--blue wire--thin" d="M1188 -80 C1242 188 1174 342 1220 540 S1138 850 1190 1140" />
+        </g>
+
+        <g class="terminal-rail" filter="url(#iron-shadow)">
+          <rect x="1740" y="286" width="116" height="488" rx="8" />
+          <path d="M1771 324 H1825 M1771 365 H1825 M1771 406 H1825 M1771 447 H1825 M1771 488 H1825 M1771 529 H1825 M1771 570 H1825 M1771 611 H1825 M1771 652 H1825 M1771 693 H1825 M1771 734 H1825" />
+          <circle cx="1798" cy="304" r="17" />
+          <circle cx="1798" cy="756" r="17" />
+          <path class="screw-slot" d="M1787 293 L1809 315 M1787 745 L1809 767" />
+        </g>
+
+        <g class="indicator indicator--blue" transform="translate(1238 194)" filter="url(#blue-lamp-glow)">
+          <path class="lamp-lead" d="M0 30 V68 L-24 92 M0 68 L22 96" />
+          <circle class="lamp-collar" r="31" />
+          <circle class="lamp-bulb" r="22" fill="url(#blue-bulb)" />
+          <circle class="lamp-shine" cx="-7" cy="-8" r="5" />
+        </g>
+
+        <g class="indicator indicator--red" transform="translate(1680 804)" filter="url(#red-lamp-glow)">
+          <path class="lamp-lead" d="M0 30 V68 L-30 96 M0 68 L29 99" />
+          <circle class="lamp-collar" r="31" />
+          <circle class="lamp-bulb" r="22" fill="url(#red-bulb)" />
+          <circle class="lamp-shine" cx="-7" cy="-8" r="5" />
         </g>
 
         <g class="chain-run chain-run--upper" filter="url(#iron-shadow)">
@@ -139,10 +203,11 @@
           <svg class="machine__assembly" viewBox="0 0 640 620">
             <defs>
               <radialGradient id="gear-face" cx="34%" cy="26%">
-                <stop offset="0" stop-color="#9b9383" />
-                <stop offset="0.32" stop-color="#4c4941" />
-                <stop offset="0.7" stop-color="#24231f" />
-                <stop offset="1" stop-color="#0d0d0b" />
+                <stop offset="0" stop-color="#d9d4c9" />
+                <stop offset="0.2" stop-color="#77736a" />
+                <stop offset="0.48" stop-color="#35342f" />
+                <stop offset="0.74" stop-color="#8a857b" />
+                <stop offset="1" stop-color="#171713" />
               </radialGradient>
               <radialGradient id="hub-brass" cx="35%" cy="30%">
                 <stop offset="0" stop-color="#e0b474" />
@@ -150,9 +215,10 @@
                 <stop offset="1" stop-color="#2c2118" />
               </radialGradient>
               <linearGradient id="tooth-rust" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stop-color="#d07037" />
-                <stop offset="0.45" stop-color="#6f321f" />
-                <stop offset="1" stop-color="#2a1b15" />
+                <stop offset="0" stop-color="#ded8cb" />
+                <stop offset="0.34" stop-color="#777268" />
+                <stop offset="0.68" stop-color="#a44b2b" />
+                <stop offset="1" stop-color="#282621" />
               </linearGradient>
               <filter id="machine-shadow" x="-50%" y="-50%" width="200%" height="200%">
                 <feGaussianBlur in="SourceAlpha" stdDeviation="8" result="blur" />
@@ -187,6 +253,8 @@
               <circle class="gear__teeth" cx="328" cy="312" r="220" />
               <circle class="gear__groove" cx="328" cy="312" r="168" />
               <circle class="gear__groove gear__groove--inner" cx="328" cy="312" r="116" />
+              <path class="gear__rust" d="M185 169 A202 202 0 0 1 284 115" />
+              <path class="gear__rust gear__rust--lower" d="M416 493 A202 202 0 0 1 351 512" />
             </g>
 
             <g class="gear gear--middle" filter="url(#gear-grit)">

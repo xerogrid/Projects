@@ -97,19 +97,20 @@ body {
 .factory-floor {
   position: absolute;
   z-index: 0;
-  right: -8vw;
-  bottom: -24vh;
-  left: -8vw;
-  height: 61vh;
-  transform: perspective(700px) rotateX(61deg);
-  transform-origin: center top;
-  border-top: 2px solid rgba(154, 137, 112, 0.22);
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 48vh;
+  border-top: 3px solid rgba(128, 119, 104, 0.32);
   background:
-    linear-gradient(90deg, rgba(154, 72, 38, 0.06), transparent 25%, transparent 75%, rgba(154, 72, 38, 0.06)),
-    repeating-linear-gradient(45deg, transparent 0 31px, rgba(130, 124, 109, 0.09) 32px 34px),
-    repeating-linear-gradient(-45deg, transparent 0 31px, rgba(130, 124, 109, 0.07) 32px 34px),
-    linear-gradient(180deg, rgba(51, 49, 42, 0.3), rgba(8, 8, 7, 0.9));
-  box-shadow: 0 -18px 70px rgba(0, 0, 0, 0.72);
+    radial-gradient(circle at 15% 18%, #847968 0 3px, #161511 4px 7px, transparent 8px),
+    radial-gradient(circle at 87% 78%, #847968 0 3px, #161511 4px 7px, transparent 8px),
+    linear-gradient(90deg, transparent 0 28%, rgba(127, 58, 31, 0.18) 28.2%, transparent 28.7% 71%, rgba(127, 58, 31, 0.15) 71.2%, transparent 71.7%),
+    repeating-linear-gradient(0deg, transparent 0 84px, rgba(133, 124, 107, 0.08) 85px 87px),
+    linear-gradient(180deg, rgba(47, 45, 39, 0.58), rgba(7, 7, 6, 0.96));
+  box-shadow:
+    0 -18px 70px rgba(0, 0, 0, 0.72),
+    inset 0 1px rgba(255, 255, 255, 0.06);
 }
 
 .mechanical-backdrop {
@@ -119,7 +120,7 @@ body {
   width: 100%;
   height: 100%;
   overflow: visible;
-  opacity: 0.82;
+  opacity: 0.92;
   pointer-events: none;
 }
 
@@ -154,6 +155,96 @@ body {
   stroke: #7e3823;
   stroke-width: 4;
   opacity: 0.7;
+}
+
+.wire {
+  fill: none;
+  stroke-width: 14;
+  stroke-linecap: round;
+  paint-order: stroke;
+}
+
+.wire--red {
+  stroke: #e12718;
+}
+
+.wire--blue {
+  stroke: #0574e8;
+}
+
+.wire--yellow {
+  stroke: #e5ad19;
+}
+
+.wire--white {
+  stroke: #dad7ca;
+}
+
+.wire--thin {
+  stroke-width: 8;
+}
+
+.wire-harness {
+  opacity: 0.82;
+}
+
+.terminal-rail rect {
+  fill: #20201c;
+  stroke: #5d584e;
+  stroke-width: 8;
+}
+
+.terminal-rail > path:not(.screw-slot) {
+  fill: none;
+  stroke: #8e8473;
+  stroke-width: 13;
+  stroke-linecap: square;
+  opacity: 0.7;
+}
+
+.terminal-rail circle {
+  fill: url("#pipe-steel");
+  stroke: #171612;
+  stroke-width: 5;
+}
+
+.terminal-rail .screw-slot {
+  fill: none;
+  stroke: #171612;
+  stroke-width: 5;
+  stroke-linecap: round;
+}
+
+.indicator {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: lampPulse 2.4s ease-in-out infinite;
+}
+
+.indicator--red {
+  animation-delay: -1.1s;
+}
+
+.lamp-lead {
+  fill: none;
+  stroke: #797267;
+  stroke-width: 9;
+  stroke-linecap: round;
+}
+
+.lamp-collar {
+  fill: url("#pipe-steel");
+  stroke: #171612;
+  stroke-width: 8;
+}
+
+.lamp-bulb {
+  stroke: rgba(255, 255, 255, 0.48);
+  stroke-width: 2;
+}
+
+.lamp-shine {
+  fill: rgba(255, 255, 255, 0.82);
 }
 
 .chain-run--upper {
@@ -252,11 +343,16 @@ body {
 }
 
 .brand__name {
-  color: var(--paper);
+  color: transparent;
   font-size: clamp(1.55rem, 2.9vw, 4.15rem);
   font-weight: 900;
   line-height: 0.92;
   letter-spacing: 0.055em;
+  -webkit-text-stroke: 1px #171612;
+  background:
+    linear-gradient(180deg, #f1ece1 0%, #8f8a81 38%, #e2ddd2 50%, #5b574f 72%, #c4bcad 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
   text-shadow:
     2px 3px 0 #161612,
     4px 6px 5px rgba(0, 0, 0, 0.65);
@@ -350,7 +446,12 @@ h1 {
   display: block;
   width: max-content;
   max-width: 100%;
-  color: var(--paper);
+  color: transparent;
+  -webkit-text-stroke: 1px #161511;
+  background:
+    linear-gradient(180deg, #f4eee1 0%, #aaa398 34%, #eee8dc 49%, #767168 67%, #d4ccbc 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
   opacity: 0;
   transform: translateX(-5vw);
   clip-path: inset(0 100% 0 0);
@@ -368,12 +469,15 @@ h1 {
   margin-top: 0.16em;
   color: transparent;
   font-size: 1.18em;
-  -webkit-text-stroke: 2px #e5c59d;
+  -webkit-text-stroke: 1px #17130f;
   background:
-    linear-gradient(180deg, #dc9967 5%, #a6492b 46%, #5a281b 95%);
+    repeating-linear-gradient(90deg, transparent 0 18px, rgba(39, 26, 18, 0.14) 19px 21px),
+    linear-gradient(180deg, #e5c69f 0%, #8a674a 27%, #d8b384 44%, #5d4535 67%, #b17b54 84%, #472a1d 100%);
   background-clip: text;
   -webkit-background-clip: text;
-  filter: drop-shadow(4px 6px 0 #160d09);
+  filter:
+    drop-shadow(2px 3px 0 #9d8e79)
+    drop-shadow(6px 8px 0 #160d09);
   transition-delay: 1.05s;
 }
 
@@ -572,12 +676,26 @@ h1 {
   stroke-dasharray: none;
 }
 
+.gear__rust {
+  fill: none;
+  stroke: #a84929;
+  stroke-width: 24;
+  stroke-linecap: round;
+  opacity: 0.78;
+}
+
+.gear__rust--lower {
+  stroke: #6f2f20;
+  stroke-width: 17;
+  opacity: 0.64;
+}
+
 .gear__spokes {
   fill: none;
-  stroke: #817869;
+  stroke: #aaa397;
   stroke-width: 19;
   stroke-linecap: round;
-  opacity: 0.72;
+  opacity: 0.78;
 }
 
 .gear__axle {
@@ -782,6 +900,16 @@ h1 {
     opacity: 0.22;
   }
   45% {
+    opacity: 1;
+  }
+}
+
+@keyframes lampPulse {
+  0%,
+  100% {
+    opacity: 0.74;
+  }
+  48% {
     opacity: 1;
   }
 }
