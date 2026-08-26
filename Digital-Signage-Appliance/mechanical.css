@@ -343,18 +343,16 @@ body {
 }
 
 .brand__name {
-  color: transparent;
+  color: #d8d4ca;
   font-size: clamp(1.55rem, 2.9vw, 4.15rem);
   font-weight: 900;
   line-height: 0.92;
   letter-spacing: 0.055em;
   -webkit-text-stroke: 1px #171612;
-  background:
-    linear-gradient(180deg, #f1ece1 0%, #8f8a81 38%, #e2ddd2 50%, #5b574f 72%, #c4bcad 100%);
-  background-clip: text;
-  -webkit-background-clip: text;
+  background: none;
   text-shadow:
-    2px 3px 0 #161612,
+    -1px -1px 0 #fff8e9,
+    2px 3px 0 #4d4942,
     4px 6px 5px rgba(0, 0, 0, 0.65);
 }
 
@@ -446,17 +444,15 @@ h1 {
   display: block;
   width: max-content;
   max-width: 100%;
-  color: transparent;
+  color: #d9d5cc;
   -webkit-text-stroke: 1px #161511;
-  background:
-    linear-gradient(180deg, #f4eee1 0%, #aaa398 34%, #eee8dc 49%, #767168 67%, #d4ccbc 100%);
-  background-clip: text;
-  -webkit-background-clip: text;
+  background: none;
   opacity: 0;
   transform: translateX(-5vw);
   clip-path: inset(0 100% 0 0);
   text-shadow:
-    3px 3px 0 #39372f,
+    -1px -1px 0 #fff8ea,
+    3px 3px 0 #57534c,
     6px 7px 0 #0b0b09,
     10px 13px 15px rgba(0, 0, 0, 0.8);
   transition:
@@ -467,17 +463,17 @@ h1 {
 
 .hero__line--accent {
   margin-top: 0.16em;
-  color: transparent;
+  color: #c49b75;
   font-size: 1.18em;
   -webkit-text-stroke: 1px #17130f;
-  background:
-    repeating-linear-gradient(90deg, transparent 0 18px, rgba(39, 26, 18, 0.14) 19px 21px),
-    linear-gradient(180deg, #e5c69f 0%, #8a674a 27%, #d8b384 44%, #5d4535 67%, #b17b54 84%, #472a1d 100%);
-  background-clip: text;
-  -webkit-background-clip: text;
+  background: none;
+  text-shadow:
+    -1px -1px 0 #f0d4b0,
+    2px 3px 0 #6b4d38,
+    6px 8px 0 #160d09;
   filter:
-    drop-shadow(2px 3px 0 #9d8e79)
-    drop-shadow(6px 8px 0 #160d09);
+    drop-shadow(1px 2px 0 #9d8e79)
+    drop-shadow(3px 4px 0 #160d09);
   transition-delay: 1.05s;
 }
 
