@@ -1,4 +1,5 @@
 .venv/
+.chromium-kiosk/
 __pycache__/
 *.py[cod]
 .env

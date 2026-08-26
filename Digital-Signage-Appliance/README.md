@@ -25,20 +25,34 @@ python3 -m http.server 8080
 Open `http://localhost:8080` in a browser. Add `?static` to pause continuous
 animation when taking screenshots.
 
-## Raspberry Pi kiosk preview
+## Raspberry Pi kiosk
 
-With Chromium installed, start the local server and open it fullscreen:
+The HDMI display stays white until Chromium actually loads this sign. Do not
+open a regular browser window. From the Pi, run:
 
 ```bash
-chromium-browser \
-  --kiosk \
-  --noerrdialogs \
-  --disable-infobars \
-  http://localhost:8080
+cd Digital-Signage-Appliance
+chmod +x kiosk.sh
+./kiosk.sh
 ```
 
-Automatic startup, display power management, and offline recovery will be
-added once the target Raspberry Pi OS version is confirmed.
+That script starts a local server if needed and launches Chromium in kiosk
+mode with `--password-store=basic`, which skips the white keyring password
+dialog. If that dialog is already on screen, leave both fields blank, click
+**Continue**, then confirm **Use Unsafe Storage** if asked.
+
+To start it at login, copy the desktop entry:
+
+```bash
+mkdir -p ~/.config/autostart
+cp kiosk.desktop ~/.config/autostart/
+```
+
+Edit `kiosk.desktop` so `Exec=` points at the absolute path of `kiosk.sh` on
+the Pi.
+
+If you previously launched Chromium by hand, close every Chromium window
+first, then use `./kiosk.sh`. A leftover blank Chromium tab is solid white.
 
 ## Current implementation
 

@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Fulcrum Builds Signage
+Comment=Launch the convention kiosk display
+Exec=/home/pi/Projects/Digital-Signage-Appliance/kiosk.sh
+X-GNOME-Autostart-enabled=true
+Terminal=false
