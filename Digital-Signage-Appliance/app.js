@@ -27,9 +27,4 @@ if (!staticMode && !reducedMotion) {
     signage.style.setProperty("--drift-x", `${x}px`);
     signage.style.setProperty("--drift-y", `${y}px`);
   }, 30000);
-
-  window.setInterval(() => {
-    signage.classList.add("attention");
-    window.setTimeout(() => signage.classList.remove("attention"), 1900);
-  }, 12000);
 }

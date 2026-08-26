@@ -8,12 +8,9 @@ This project is independent of the BambuLabs VLC and Stream Deck work.
 ## Sign content
 
 - Fulcrum Builds
-- Ask me about my robots
-- Photo ops welcome
-- 3D Printing · Making · Arduino Robotics
 
-The design combines industrial machinery, gears, and circuit traces with an
-original neon-grid aesthetic. It does not use franchise logos or visual assets.
+The current design is intentionally stripped back to a mechanically styled,
+top-centered company name on a pure black background.
 
 ## Preview
 
@@ -45,8 +42,8 @@ added once the target Raspberry Pi OS version is confirmed.
 ## Current implementation
 
 - Responsive 16:9 HTML layout
-- CSS perspective grid and OLED-friendly dark palette
-- Animated SVG gears, rotor, circuits, and status lights
+- Pure black OLED-friendly background
+- Top-centered mechanical wordmark
 - Periodic pixel drift to reduce static OLED wear
 - Reduced-motion support
 - No external web assets or signage runtime dependencies
