@@ -114,6 +114,25 @@ token or network request:
 .venv/bin/python busybar_control.py --dry-run signage
 ```
 
+### Live agent printout
+
+The BUSY Bar can show what the cloud agent is doing in real time. The agent
+runs in Cursor's cloud, not on the Pi; the Pi kiosk and the bar are the booth
+displays. Push a snapshot:
+
+```bash
+.venv/bin/python busybar_control.py printout "Launching HDMI kiosk"
+```
+
+Or watch a status file and update whenever it changes:
+
+```bash
+echo "Waiting for Pi keyboard" > /tmp/fulcrum-agent-printout.txt
+.venv/bin/python busybar_control.py follow /tmp/fulcrum-agent-printout.txt
+```
+
+The front LED scrolls `LIVE // <activity>`. The back OLED shows `CURSOR AGENT`
+plus the current activity line.
 ## Decisions still needed
 
 1. Confirm the OLED's native resolution and orientation.

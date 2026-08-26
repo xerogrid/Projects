@@ -43,6 +43,26 @@ class BusyBarControlTests(unittest.TestCase):
         self.assertTrue(all(element.x == 0 for element in payload.elements))
         self.assertTrue(all(element.align == "top_left" for element in payload.elements))
 
+    def test_printout_payload_contains_live_activity(self) -> None:
+        payload = busybar_control.build_printout_payload(
+            "Pulling kiosk launcher on the Pi",
+            headline="CURSOR AGENT",
+        )
+
+        text = " ".join(
+            element.text
+            for element in payload.elements
+            if isinstance(element, types.TextElement)
+        )
+        self.assertIn("LIVE", text)
+        self.assertIn("Pulling kiosk launcher on the Pi", text)
+        self.assertIn("CURSOR AGENT", text)
+        self.assertEqual(payload.priority, 80)
+        self.assertEqual(
+            [element.display for element in payload.elements],
+            [types.DisplayName.FRONT, types.DisplayName.BACK, types.DisplayName.BACK],
+        )
+
     def test_missing_token_fails_without_contacting_api(self) -> None:
         stderr = io.StringIO()
         with (

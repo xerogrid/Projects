@@ -7,6 +7,7 @@ import argparse
 import json
 import os
 import sys
+import time
 from collections.abc import Sequence
 from typing import Any
 
@@ -87,6 +88,89 @@ def build_message_payload(
         led_notification_color=color,
         elements=elements,
     )
+
+
+def build_printout_payload(
+    activity: str,
+    *,
+    headline: str = "CURSOR AGENT",
+) -> types.DisplayElements:
+    """Build a live agent-activity printout for both displays."""
+    activity = " ".join(activity.split())
+    headline = " ".join(headline.split()) or "CURSOR AGENT"
+    return types.DisplayElements(
+        application_name=APPLICATION_NAME,
+        priority=80,
+        led_notification_color=ACCENT_COLOR,
+        elements=[
+            types.TextElement(
+                id="printout-front",
+                text=f"LIVE  //  {activity}",
+                font="bold",
+                color=DEFAULT_COLOR,
+                display=types.DisplayName.FRONT,
+                x=0,
+                y=1,
+                width=DISPLAY_WIDTHS[types.DisplayName.FRONT],
+                align="top_left",
+                scroll_rate=700,
+                scroll_start_delay=400,
+                scroll_repeat_delay=800,
+            ),
+            types.TextElement(
+                id="printout-headline",
+                text=headline,
+                font="large",
+                color=DEFAULT_COLOR,
+                display=types.DisplayName.BACK,
+                x=0,
+                y=10,
+                width=DISPLAY_WIDTHS[types.DisplayName.BACK],
+                align="top_left",
+            ),
+            types.TextElement(
+                id="printout-activity",
+                text=activity,
+                font="small",
+                color="#FFFFFFFF",
+                display=types.DisplayName.BACK,
+                x=0,
+                y=46,
+                width=DISPLAY_WIDTHS[types.DisplayName.BACK],
+                align="top_left",
+                scroll_rate=700,
+                scroll_start_delay=400,
+                scroll_repeat_delay=800,
+            ),
+        ],
+    )
+
+
+def draw_printout(busybar: Any, activity: str, *, headline: str = "CURSOR AGENT") -> str:
+    """Push one live printout frame to the linked BUSY Bar."""
+    response = busybar.display_draw(
+        build_printout_payload(activity, headline=headline),
+        clear_before_draw=True,
+        sanitize_text=True,
+    )
+    return response.result
+
+
+def follow_printout(path: str, *, headline: str = "CURSOR AGENT") -> None:
+    """Watch a status file and reprint whenever the activity text changes."""
+    token = require_token()
+    last = None
+    with BusyBar(token=token, timeout=15.0, compatibility_mode="warn") as busybar:
+        while True:
+            try:
+                with open(path, encoding="utf-8") as handle:
+                    activity = handle.read().strip()
+            except FileNotFoundError:
+                activity = "WAITING FOR AGENT STATUS"
+            if activity and activity != last:
+                print(draw_printout(busybar, activity, headline=headline), flush=True)
+                last = activity
+            time.sleep(2)
 
 
 def build_signage_payload() -> types.DisplayElements:
@@ -184,6 +268,20 @@ def build_parser() -> argparse.ArgumentParser:
         "signage",
         help="show the Fulcrum Builds convention preset",
     )
+    printout_parser = subparsers.add_parser(
+        "printout",
+        help="show a live agent-activity printout on both displays",
+    )
+    printout_parser.add_argument("activity")
+    printout_parser.add_argument("--headline", default="CURSOR AGENT")
+
+    follow_parser = subparsers.add_parser(
+        "follow",
+        help="watch a status file and reprint agent activity in real time",
+    )
+    follow_parser.add_argument("path")
+    follow_parser.add_argument("--headline", default="CURSOR AGENT")
+
     subparsers.add_parser("clear", help="clear Fulcrum Builds display content")
 
     brightness_parser = subparsers.add_parser(
@@ -211,6 +309,10 @@ def dry_run(args: argparse.Namespace) -> bool:
         )
     elif args.command == "signage":
         print(payload_json(build_signage_payload()))
+    elif args.command == "printout":
+        print(payload_json(build_printout_payload(args.activity, headline=args.headline)))
+    elif args.command == "follow":
+        print(json.dumps({"operation": "follow", "path": args.path, "headline": args.headline}))
     elif args.command == "clear":
         print(json.dumps({"operation": "clear", "application_name": APPLICATION_NAME}))
     elif args.command == "brightness":
@@ -247,6 +349,8 @@ def run_command(args: argparse.Namespace) -> None:
                 sanitize_text=True,
             )
             print(response.result)
+        elif args.command == "printout":
+            print(draw_printout(busybar, args.activity, headline=args.headline))
         elif args.command == "clear":
             response = busybar.display_clear(application_name=APPLICATION_NAME)
             print(response.result)
@@ -260,8 +364,13 @@ def run_command(args: argparse.Namespace) -> None:
 def main(argv: Sequence[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     try:
-        if not dry_run(args):
+        if args.command == "follow" and not args.dry_run:
+            follow_printout(args.path, headline=args.headline)
+        elif not dry_run(args):
             run_command(args)
+    except KeyboardInterrupt:
+        print("Stopped BUSY Bar printout", file=sys.stderr)
+        return 0
     except ConfigurationError as exc:
         print(f"Configuration error: {exc}", file=sys.stderr)
         return 2
