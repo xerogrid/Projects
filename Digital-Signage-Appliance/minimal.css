@@ -2,6 +2,8 @@
   color-scheme: dark;
   --drift-x: 0px;
   --drift-y: 0px;
+  --trace: #4dbb55;
+  --trace-shadow: #102f15;
   font-family: "Arial Black", Impact, "Arial Narrow", sans-serif;
 }
 
@@ -49,11 +51,11 @@ body {
 
 .trace-lines {
   fill: none;
-  stroke: #cf3931;
+  stroke: var(--trace);
   stroke-width: 7;
   stroke-linecap: square;
   stroke-linejoin: bevel;
-  filter: drop-shadow(0 3px 0 #35100d);
+  filter: drop-shadow(0 3px 0 var(--trace-shadow));
 }
 
 .trace-lines path,
@@ -63,12 +65,12 @@ body {
 
 .trace-pads circle {
   fill: #000;
-  stroke: #cf3931;
+  stroke: var(--trace);
   stroke-width: 6;
 }
 
 .trace-pads circle:nth-child(2) {
-  fill: #cf3931;
+  fill: var(--trace);
   stroke: none;
 }
 

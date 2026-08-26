@@ -10,7 +10,7 @@ This project is independent of the BambuLabs VLC and Stream Deck work.
 - Fulcrum Builds
 
 The current design is intentionally stripped back to a mechanically styled,
-top-centered company name and matte red circuit traces on a pure black
+top-centered company name and matte green circuit traces on a pure black
 background.
 
 ## Preview
@@ -45,7 +45,7 @@ added once the target Raspberry Pi OS version is confirmed.
 - Responsive 16:9 HTML layout
 - Pure black OLED-friendly background
 - Top-centered mechanical wordmark
-- Matte red circuit traces and terminal pads
+- Matte green circuit traces and terminal pads distributed around the frame
 - Periodic pixel drift to reduce static OLED wear
 - Reduced-motion support
 - No external web assets or signage runtime dependencies
