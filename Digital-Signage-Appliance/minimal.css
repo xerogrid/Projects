@@ -12,6 +12,9 @@
   --drift-y: 0px;
   --trace: #4dbb55;
   --trace-shadow: #102f15;
+  --loop: 18s;
+  --delay: 0ms;
+  --len: 0;
   font-family: "Oxanium", "Arial Black", Impact, sans-serif;
 }
 
@@ -123,12 +126,24 @@ body {
 .trace-lines path,
 .trace-pads circle {
   vector-effect: non-scaling-stroke;
+  visibility: hidden;
+}
+
+.is-traced .trace-lines path,
+.is-traced .trace-pads circle {
+  visibility: visible;
+}
+
+.trace-lines path {
+  stroke-dasharray: var(--len);
+  stroke-dashoffset: var(--len);
 }
 
 .trace-pads circle {
   fill: #000;
   stroke: var(--trace);
   stroke-width: 6;
+  opacity: 0;
 }
 
 .trace-pads circle:nth-child(2) {
@@ -138,6 +153,17 @@ body {
 
 .is-ready .traces {
   opacity: 0.92;
+  transition-duration: 0.25s;
+  transition-delay: 0s;
+}
+
+.is-still .trace-lines path,
+.is-ready.is-still .trace-lines path {
+  stroke-dashoffset: 0;
+}
+
+.is-still .trace-pads circle {
+  opacity: 1;
 }
 
 .brand {

@@ -46,6 +46,7 @@ added once the target Raspberry Pi OS version is confirmed.
 - OLED-friendly black PCB background with charcoal silkscreen markings
 - Top-centered mechanical wordmark using a self-hosted Oxanium font
 - Matte green circuit traces and terminal pads distributed around the frame
+- Looping edge-to-pad trace etch that holds the current still, then retracts
 - Periodic pixel drift to reduce static OLED wear
 - Reduced-motion support
 - No external web assets or signage runtime dependencies
@@ -89,6 +90,10 @@ python3 -m venv .venv
 
 # Agent activity (outranks the booth preset)
 .venv/bin/python busybar_control.py agent "MAKING CHANGES"
+
+# Idle / waiting (picks a stock line, or pass one explicitly)
+.venv/bin/python busybar_control.py sleeping
+.venv/bin/python busybar_control.py sleeping "Waiting for input"
 
 # Other controls
 .venv/bin/python busybar_control.py message "PHOTO OPS WELCOME"

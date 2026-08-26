@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import random
 import sys
 from collections.abc import Sequence
 from typing import Any
@@ -18,12 +19,19 @@ ADDRESS_ENV_VAR = "BUSYBAR_ADDRESS"
 DEFAULT_COLOR = "#00FF41FF"
 ACCENT_COLOR = "#00FF41FF"
 AGENT_COLOR = "#38BDF8FF"
+SLEEPING_COLOR = "#7CFF7CFF"
 # Firmware examples use 800 pixels/minute. 2400 is about 3x that.
 SCROLL_RATE = 2400
 SCROLL_START_DELAY_MS = 200
 SCROLL_REPEAT_DELAY_MS = 400
 SIGNAGE_PRIORITY = 70
 AGENT_PRIORITY = 90
+SLEEPING_LINES = (
+    "Agent is taking a smoke break",
+    "Snoozing",
+    "Waiting for input",
+    "Stop procrastinating",
+)
 DISPLAY_WIDTHS = {
     types.DisplayName.FRONT: 72,
     types.DisplayName.BACK: 160,
@@ -207,6 +215,65 @@ def build_agent_payload(detail: str = "MAKING CHANGES") -> types.DisplayElements
     )
 
 
+def choose_sleeping_line(detail: str | None = None, *, rng: random.Random | None = None) -> str:
+    """Return an explicit idle line, or pick one of the stock jokes."""
+    if detail and detail.strip():
+        return detail.strip()
+    picker = rng or random
+    return picker.choice(SLEEPING_LINES)
+
+
+def build_sleeping_payload(detail: str | None = None, *, rng: random.Random | None = None) -> types.DisplayElements:
+    """Show that the agent is idle and waiting."""
+    callout = choose_sleeping_line(detail, rng=rng)
+    return types.DisplayElements(
+        application_name=APPLICATION_NAME,
+        priority=SIGNAGE_PRIORITY,
+        led_notification_color=SLEEPING_COLOR,
+        elements=[
+            types.TextElement(
+                id="front-marquee",
+                text=f"SLEEPING  //  {callout.upper()}",
+                font="bold",
+                color=SLEEPING_COLOR,
+                display=types.DisplayName.FRONT,
+                x=0,
+                y=1,
+                width=DISPLAY_WIDTHS[types.DisplayName.FRONT],
+                align="top_left",
+                scroll_rate=SCROLL_RATE,
+                scroll_start_delay=SCROLL_START_DELAY_MS,
+                scroll_repeat_delay=SCROLL_REPEAT_DELAY_MS,
+            ),
+            types.TextElement(
+                id="back-title",
+                text="SLEEPING",
+                font="large",
+                color=SLEEPING_COLOR,
+                display=types.DisplayName.BACK,
+                x=0,
+                y=14,
+                width=DISPLAY_WIDTHS[types.DisplayName.BACK],
+                align="top_left",
+            ),
+            types.TextElement(
+                id="back-callout",
+                text=callout.upper(),
+                font="small",
+                color=DEFAULT_COLOR,
+                display=types.DisplayName.BACK,
+                x=0,
+                y=46,
+                width=DISPLAY_WIDTHS[types.DisplayName.BACK],
+                align="top_left",
+                scroll_rate=SCROLL_RATE,
+                scroll_start_delay=SCROLL_START_DELAY_MS,
+                scroll_repeat_delay=SCROLL_REPEAT_DELAY_MS,
+            ),
+        ],
+    )
+
+
 def payload_json(payload: types.DisplayElements) -> str:
     """Serialize a payload for dry-run inspection."""
     return json.dumps(payload.model_dump(mode="json", exclude_none=True), indent=2)
@@ -262,6 +329,16 @@ def build_parser() -> argparse.ArgumentParser:
         default="MAKING CHANGES",
         help="short status line for the rear display",
     )
+    sleeping_parser = subparsers.add_parser(
+        "sleeping",
+        help="show that the agent is idle / waiting",
+    )
+    sleeping_parser.add_argument(
+        "detail",
+        nargs="?",
+        default=None,
+        help="idle line; omit to pick one at random",
+    )
     subparsers.add_parser("clear", help="clear Fulcrum Builds display content")
 
     brightness_parser = subparsers.add_parser(
@@ -291,6 +368,8 @@ def dry_run(args: argparse.Namespace) -> bool:
         print(payload_json(build_signage_payload()))
     elif args.command == "agent":
         print(payload_json(build_agent_payload(args.detail)))
+    elif args.command == "sleeping":
+        print(payload_json(build_sleeping_payload(args.detail)))
     elif args.command == "clear":
         print(json.dumps({"operation": "clear", "application_name": APPLICATION_NAME}))
     elif args.command == "brightness":
@@ -329,6 +408,13 @@ def run_command(args: argparse.Namespace) -> None:
         elif args.command == "agent":
             response = busybar.display_draw(
                 build_agent_payload(args.detail),
+                clear_before_draw=True,
+                sanitize_text=True,
+            )
+            print(response.result)
+        elif args.command == "sleeping":
+            response = busybar.display_draw(
+                build_sleeping_payload(args.detail),
                 clear_before_draw=True,
                 sanitize_text=True,
             )

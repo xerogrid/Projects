@@ -11,8 +11,11 @@ When the Fulcrum Builds Pi is reachable, update its BUSY Bar with
 1. Before editing files, installing dependencies, deploying, committing, or
    pushing, run:
    `ssh -i ~/.ssh/xerogrid-signage signage@10.117.186.125 "sudo BUSYBAR_ADDRESS=10.0.4.20 /opt/digital-signage/venv/bin/python /opt/digital-signage/bin/busybar_control.py agent 'MAKING CHANGES'"`
-2. After all changes and verification finish, restore the booth preset:
-   `ssh -i ~/.ssh/xerogrid-signage signage@10.117.186.125 "sudo BUSYBAR_ADDRESS=10.0.4.20 /opt/digital-signage/venv/bin/python /opt/digital-signage/bin/busybar_control.py signage"`
+2. After all changes and verification finish, or when waiting on the user,
+   show idle status:
+   `ssh -i ~/.ssh/xerogrid-signage signage@10.117.186.125 "BUSYBAR_ADDRESS=10.0.4.20 /opt/digital-signage/venv/bin/python /opt/digital-signage/bin/busybar_control.py sleeping"`
+3. Restore the booth preset only when that is the intended display:
+   `ssh -i ~/.ssh/xerogrid-signage signage@10.117.186.125 "BUSYBAR_ADDRESS=10.0.4.20 /opt/digital-signage/venv/bin/python /opt/digital-signage/bin/busybar_control.py signage"`
 
 Use a short custom detail when helpful (`DEPLOY SIGNAGE`, `RESTART KIOSK`).
 If the Pi, private key, or local network is unavailable, continue without

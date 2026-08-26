@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import io
 import os
+import random
 import unittest
 from contextlib import redirect_stderr, redirect_stdout
 from unittest import mock
@@ -62,6 +63,42 @@ class BusyBarControlTests(unittest.TestCase):
         self.assertIn("DEPLOY SIGNAGE", text)
         self.assertEqual(payload.priority, 90)
         self.assertEqual(payload.led_notification_color, "#38BDF8FF")
+
+    def test_sleeping_payload_uses_stock_idle_lines(self) -> None:
+        payload = busybar_control.build_sleeping_payload(rng=random.Random(0))
+        text = " ".join(
+            element.text
+            for element in payload.elements
+            if isinstance(element, types.TextElement)
+        )
+
+        self.assertIn("SLEEPING", text)
+        self.assertTrue(
+            any(line.upper() in text for line in busybar_control.SLEEPING_LINES)
+        )
+        self.assertEqual(payload.led_notification_color, "#7CFF7CFF")
+
+    def test_sleeping_payload_accepts_explicit_line(self) -> None:
+        payload = busybar_control.build_sleeping_payload("Waiting for input")
+        text = " ".join(
+            element.text
+            for element in payload.elements
+            if isinstance(element, types.TextElement)
+        )
+        self.assertIn("WAITING FOR INPUT", text)
+        self.assertEqual(payload.priority, 70)
+
+    def test_dry_run_sleeping_does_not_require_token(self) -> None:
+        stdout = io.StringIO()
+        with (
+            mock.patch.dict(os.environ, {}, clear=True),
+            redirect_stdout(stdout),
+        ):
+            result = busybar_control.main(["--dry-run", "sleeping", "Snoozing"])
+
+        self.assertEqual(result, 0)
+        self.assertIn("SLEEPING", stdout.getvalue())
+        self.assertIn("SNOOZING", stdout.getvalue())
 
     def test_usb_address_skips_cloud_token(self) -> None:
         client = mock.MagicMock()
