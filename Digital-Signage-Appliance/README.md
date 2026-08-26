@@ -87,6 +87,9 @@ python3 -m venv .venv
 # Fulcrum Builds preset on both displays
 .venv/bin/python busybar_control.py signage
 
+# Agent activity (outranks the booth preset)
+.venv/bin/python busybar_control.py agent "MAKING CHANGES"
+
 # Other controls
 .venv/bin/python busybar_control.py message "PHOTO OPS WELCOME"
 .venv/bin/python busybar_control.py brightness 75

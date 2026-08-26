@@ -16,7 +16,7 @@ class BusyBarControlTests(unittest.TestCase):
             "HELLO",
             display="both",
             font="bold",
-            color="#40F4FFFF",
+            color="#00FF41FF",
         )
 
         self.assertEqual(payload.application_name, "fulcrum-builds-signage")
@@ -39,9 +39,53 @@ class BusyBarControlTests(unittest.TestCase):
 
         self.assertIn("FULCRUM BUILDS", text)
         self.assertIn("ASK ME ABOUT MY ROBOTS", text)
-        self.assertEqual(payload.led_notification_color, "#FF982AFF")
+        self.assertEqual(payload.led_notification_color, "#00FF41FF")
+        self.assertEqual(payload.priority, 70)
         self.assertTrue(all(element.x == 0 for element in payload.elements))
         self.assertTrue(all(element.align == "top_left" for element in payload.elements))
+        self.assertTrue(
+            all(
+                getattr(element, "scroll_rate", None) in (None, 2400)
+                for element in payload.elements
+            )
+        )
+
+    def test_agent_payload_outranks_signage_preset(self) -> None:
+        payload = busybar_control.build_agent_payload("DEPLOY SIGNAGE")
+        text = " ".join(
+            element.text
+            for element in payload.elements
+            if isinstance(element, types.TextElement)
+        )
+
+        self.assertIn("AGENT", text)
+        self.assertIn("DEPLOY SIGNAGE", text)
+        self.assertEqual(payload.priority, 90)
+        self.assertEqual(payload.led_notification_color, "#38BDF8FF")
+
+    def test_usb_address_skips_cloud_token(self) -> None:
+        client = mock.MagicMock()
+        client.display_draw.return_value.result = "ok"
+        context = mock.MagicMock()
+        context.__enter__.return_value = client
+        context.__exit__.return_value = False
+
+        with (
+            mock.patch.dict(
+                os.environ,
+                {busybar_control.ADDRESS_ENV_VAR: "10.0.4.20"},
+                clear=True,
+            ),
+            mock.patch.object(busybar_control, "BusyBar", return_value=context) as factory,
+        ):
+            result = busybar_control.main(["agent", "MAKING CHANGES"])
+
+        self.assertEqual(result, 0)
+        factory.assert_called_once_with(
+            "10.0.4.20",
+            timeout=15.0,
+            compatibility_mode="warn",
+        )
 
     def test_missing_token_fails_without_contacting_api(self) -> None:
         stderr = io.StringIO()
