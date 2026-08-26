@@ -36,8 +36,49 @@ body {
   transition: transform 8s linear;
 }
 
+.traces {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  opacity: 0;
+  transition: opacity 0.8s ease 0.15s;
+}
+
+.trace-lines {
+  fill: none;
+  stroke: #cf3931;
+  stroke-width: 7;
+  stroke-linecap: square;
+  stroke-linejoin: bevel;
+  filter: drop-shadow(0 3px 0 #35100d);
+}
+
+.trace-lines path,
+.trace-pads circle {
+  vector-effect: non-scaling-stroke;
+}
+
+.trace-pads circle {
+  fill: #000;
+  stroke: #cf3931;
+  stroke-width: 6;
+}
+
+.trace-pads circle:nth-child(2) {
+  fill: #cf3931;
+  stroke: none;
+}
+
+.is-ready .traces {
+  opacity: 0.92;
+}
+
 .brand {
   position: absolute;
+  z-index: 2;
   top: clamp(2.5rem, 8vh, 7rem);
   left: 50%;
   display: flex;
