@@ -42,9 +42,9 @@ body {
   overflow: hidden;
   color: #d8d8d2;
   background:
-    radial-gradient(circle at 26% 38%, rgba(20, 35, 26, 0.12), transparent 31%),
-    radial-gradient(circle at 78% 72%, rgba(17, 29, 22, 0.1), transparent 34%),
-    repeating-linear-gradient(0deg, transparent 0 4px, rgba(255, 255, 255, 0.004) 5px),
+    radial-gradient(circle at 26% 38%, rgba(24, 43, 31, 0.18), transparent 31%),
+    radial-gradient(circle at 78% 72%, rgba(21, 37, 27, 0.16), transparent 34%),
+    repeating-linear-gradient(0deg, transparent 0 4px, rgba(255, 255, 255, 0.007) 5px),
     #010201;
   transform: translate(var(--drift-x), var(--drift-y)) scale(1.004);
   transition: transform 8s linear;
@@ -69,21 +69,21 @@ body {
 .board-edge,
 .component-outlines {
   fill: none;
-  stroke: #151c17;
-  stroke-width: 2;
+  stroke: #202b23;
+  stroke-width: 2.5;
 }
 
 .board-edge {
-  stroke: #1b241d;
+  stroke: #29372d;
   stroke-width: 3;
 }
 
 .component-outlines circle {
-  fill: rgba(10, 14, 11, 0.55);
+  fill: rgba(15, 22, 17, 0.7);
 }
 
 .silkscreen-labels {
-  fill: #1d281f;
+  fill: #314034;
   font-family: "Oxanium", monospace;
   font-size: 12px;
   font-weight: 700;
@@ -91,13 +91,13 @@ body {
 }
 
 .silkscreen-vias {
-  fill: #101611;
-  stroke: #263329;
+  fill: #182019;
+  stroke: #3a4c3e;
   stroke-width: 1.5;
 }
 
 .is-ready .pcb-silkscreen {
-  opacity: 0.82;
+  opacity: 0.96;
 }
 
 .traces {
