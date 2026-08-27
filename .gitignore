@@ -1,0 +1,22 @@
+# macOS
+.DS_Store
+
+# Root-local editor configuration
+/.vscode/
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# PlatformIO
+.pio/
+
+# Local environment and temporary files
+.env
+.env.*
+*.log
+*.swp
+*.tmp
+*~
