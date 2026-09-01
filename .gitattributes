@@ -1,0 +1,31 @@
+* text=auto eol=lf
+
+*.sh text eol=lf
+*.py text
+*.js text
+*.css text
+*.html text
+*.md text
+*.yml text
+*.yaml text
+*.ini text
+*.cpp text
+*.h text
+*.hpp text
+*.ino text
+*.c text
+*.txt text
+*.svg text
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.mp3 binary
+*.wav binary
+*.woff binary
+*.woff2 binary
+*.step binary
+*.stl binary
+
+Digital-Signage-Appliance/assets/fonts/** linguist-vendored

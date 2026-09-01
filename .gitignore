@@ -1,22 +1,45 @@
-# macOS
+# OS
 .DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+._*
 
-# Root-local editor configuration
+# Editors and local agent state
 /.vscode/
+.idea/
+.cursor/
+*.swp
+*.swo
+*~
 
 # Python
 .venv/
+venv/
 __pycache__/
 *.py[cod]
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
 
-# PlatformIO
+# PlatformIO / embedded build artifacts
 .pio/
+*.elf
+*.hex
+*.bin
+*.eep
+*.map
+compile_commands.json
+CMakeListsPrivate.txt
+.clang_complete
+.gcc-flags.json
 
-# Local environment and temporary files
+# Secrets and local-only files
 .env
 .env.*
+!.env.example
 *.log
-*.swp
 *.tmp
-*~
+*.local.md

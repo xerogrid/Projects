@@ -1,27 +1,35 @@
 # Maker Projects
 
-This repository is a small monorepo for related convention-display and droid
-hardware projects. Each project owns its dependencies, documentation, and
-tests; the repository root owns shared housekeeping and CI.
+Convention-display and droid hardware work in one repository. Each project
+owns its firmware or app, documentation, and checks. This root owns license,
+ignore rules, and CI.
 
 ## Projects
 
-- [`Digital-Signage-Appliance`](Digital-Signage-Appliance/) — Raspberry Pi
-  convention signage and BUSY Bar integration.
-- [`Droid-Foundry`](Droid-Foundry/) — PlatformIO-based Arduino animatronics
-  and robotics projects.
-- [`Audio Files`](Audio%20Files/) — small source audio assets shared by the
-  physical builds.
+| Path | What it is |
+| --- | --- |
+| [`Digital-Signage-Appliance`](Digital-Signage-Appliance/) | Raspberry Pi kiosk signage and BUSY Bar control for the Fulcrum Builds booth |
+| [`Droid-Foundry`](Droid-Foundry/) | PlatformIO firmware for Pit Droid, Battle Droid, and IG-12 assassin droid builds |
+| [`Audio Files`](Audio%20Files/) | Vocoder clips used by the assassin droid DFPlayer |
+
+The original Arduino-IDE experiments live in the archived
+[`xerogrid/Droid-Factory`](https://github.com/xerogrid/Droid-Factory) snapshot.
+Do not start new work there.
+
+## Default branch
+
+`main`. Feature branches are fine; do not treat `dev` or `master` as the
+source of truth.
 
 ## Conventions
 
-- Keep generated environments (`.venv`, `.pio`, caches) out of Git.
-- Put project-specific documentation and commands in that project's README.
+- Keep generated trees (`.venv`, `.pio`, editor caches) out of Git.
+- Put project-specific commands in that project's README.
 - Use kebab-case for new machine-facing paths. Existing display names with
-  spaces are retained to avoid breaking hardware documentation.
-- Store large, versioned release artifacts in GitHub Releases rather than in
-  the source tree.
-- The default branch is `main`.
+  spaces stay as they are so hardware notes and pin maps keep matching the
+  folders on disk.
+- Store large versioned release artifacts in GitHub Releases, not in the tree.
+- Local network names, SSH keys, and booth IP addresses stay off GitHub.
 
 ## Checks
 
@@ -33,8 +41,12 @@ cd ../Droid-Foundry
 pio run
 ```
 
+`pio run` builds the named production environments in
+`Droid-Foundry/platformio.ini` (assassin, pit, and battle PIR firmware). It
+does not compile every archived sketch.
+
 ## License
 
-Original project code and documentation are available under the [MIT
-License](LICENSE). Third-party components retain their own terms; see
+Original project code and documentation are under the [MIT
+License](LICENSE). Third-party components keep their own terms; see
 [Third-Party Notices](THIRD_PARTY_NOTICES.md).

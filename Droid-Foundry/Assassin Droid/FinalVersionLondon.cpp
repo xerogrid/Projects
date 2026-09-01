@@ -217,6 +217,40 @@ const unsigned long fullActiveAudioInterval = 8000; // Check every 8 seconds
 unsigned long lastSensorHomeTime = 0;
 const unsigned long sensorHomeInterval = 1800000; // 30 minutes in milliseconds
 
+// Forward declarations — this file is compiled as .cpp, so the Arduino
+// sketch preprocessor will not generate prototypes automatically.
+void readHardwareControls();
+void handleWhiteButtonPress();
+void handleRedButtonPress();
+void handleMuteToggle();
+void handleHomeToggle();
+void handleProductionToggle();
+void homeAllServos();
+void blinkOrangeRapid();
+void printHardwareStatus();
+void blinkTwiceRed();
+void blinkHalfRedNoFade();
+void updateLEDs();
+void dormantLEDSweep();
+void initializeDFPlayer();
+void playStartupAudio();
+void playAudioFile(int fileNumber);
+void handleSerialAudioCommands();
+void printDetail(uint8_t type, int value);
+void tripleFlashLED(int ledIndex);
+void startupLEDSequence();
+void sweepServoStartup(Servo &servo, int minAngle, int maxAngle, int homeAngle);
+void blinkAllGreenTwice();
+void startupSequence();
+void updateProductionMode();
+void handleSensorHoming();
+void handleProductionAudio();
+bool isServoMoving();
+void moveChinPan();
+void moveEyePan();
+void moveEyeTilt();
+void moveSensorPan();
+
 //========================================
 //---------- HARDWARE FUNCTIONS ----------
 //========================================
