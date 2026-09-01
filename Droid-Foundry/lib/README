@@ -1,2 +1,0 @@
-Unused. Third-party libraries come from `lib_deps` in platformio.ini, not
-from this directory. See README.md.
