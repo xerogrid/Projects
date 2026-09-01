@@ -28,7 +28,7 @@ const int horizontalRightLimit = 160;
 #if TEST_MODE
 const unsigned long sleepInterval = 7000;  // 7 seconds for testing
 #else
-const unsigned long sleepInterval = 10 * 60 * 1000;  // 10 minutes for normal operation
+const unsigned long sleepInterval = 10UL * 60UL * 1000UL;  // 10 minutes for normal operation
 #endif
 
 bool sleeping = false;
