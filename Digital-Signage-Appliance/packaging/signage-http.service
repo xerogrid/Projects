@@ -1,0 +1,15 @@
+[Unit]
+Description=Fulcrum Builds signage HTTP server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/digital-signage/www
+Environment=SIGNAGE_MODE_FILE=/opt/digital-signage/state/mode.json
+ExecStart=/usr/bin/python3 /opt/digital-signage/bin/serve.py --bind 127.0.0.1 --port 4173 --directory /opt/digital-signage/www
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=default.target

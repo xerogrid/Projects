@@ -1,0 +1,15 @@
+[Unit]
+Description=Fulcrum Builds BUSY Bar booth status and away toggle
+After=signage-http.service
+Wants=signage-http.service
+
+[Service]
+Type=simple
+Environment=BUSYBAR_ADDRESS=10.0.4.20
+Environment=SIGNAGE_API=http://127.0.0.1:4173
+ExecStart=/opt/digital-signage/venv/bin/python /opt/digital-signage/bin/busybar_control.py watch
+Restart=always
+RestartSec=15
+
+[Install]
+WantedBy=default.target

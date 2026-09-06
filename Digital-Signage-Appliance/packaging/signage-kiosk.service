@@ -1,0 +1,17 @@
+[Unit]
+Description=Fulcrum Builds Chromium kiosk
+After=signage-http.service graphical-session.target
+Wants=signage-http.service
+
+[Service]
+Type=simple
+Environment=SIGNAGE_URL=http://127.0.0.1:4173
+ExecStart=/opt/digital-signage/bin/start-kiosk.sh
+Restart=always
+RestartSec=5
+KillMode=control-group
+TimeoutStopSec=10
+
+[Install]
+WantedBy=default.target
+WantedBy=graphical-session.target

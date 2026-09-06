@@ -166,11 +166,21 @@ body {
   opacity: 1;
 }
 
-.brand {
+.masthead {
   position: absolute;
-  z-index: 2;
+  z-index: 3;
   top: clamp(2.5rem, 8vh, 7rem);
   left: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.7em;
+  width: max-content;
+  max-width: 90vw;
+  transform: translateX(-50%);
+}
+
+.brand {
   display: flex;
   align-items: baseline;
   justify-content: center;
@@ -193,7 +203,7 @@ body {
     0 2px 0 #5c685f,
     0 5px 0 #111511;
   opacity: 0;
-  transform: translate(-50%, -0.3em);
+  transform: translateY(-0.3em);
   transition:
     opacity 0.7s ease,
     transform 0.9s cubic-bezier(0.2, 0.75, 0.25, 1);
@@ -210,7 +220,93 @@ body {
 
 .is-ready .brand {
   opacity: 1;
-  transform: translate(-50%, 0);
+  transform: none;
+}
+
+.photo-stage {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.9s ease;
+}
+
+.photo-stage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.photo-stage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to bottom, rgba(1, 2, 1, 0.58) 0%, transparent 28%, transparent 68%, rgba(1, 2, 1, 0.62) 100%);
+}
+
+.photo-caption {
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  bottom: clamp(1.4rem, 5vh, 3.2rem);
+  width: max-content;
+  max-width: 90vw;
+  margin: 0;
+  color: #c5cec6;
+  font-size: clamp(0.85rem, 1.8vw, 1.35rem);
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  text-shadow: 0 2px 0 #111511;
+  transform: translateX(-50%);
+}
+
+.is-photo .photo-stage {
+  opacity: 1;
+}
+
+.is-photo .pcb-silkscreen,
+.is-photo .traces {
+  opacity: 0;
+  transition-duration: 0.45s;
+}
+
+.is-photo .brand {
+  text-shadow:
+    0 2px 0 #5c685f,
+    0 5px 0 #111511,
+    0 0 24px #010201;
+}
+
+.away-banner {
+  width: max-content;
+  max-width: 90vw;
+  margin: 0;
+  color: #7cff7c;
+  font-size: clamp(0.9rem, 2.1vw, 1.6rem);
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  text-shadow: 0 2px 0 #102f15;
+  opacity: 0;
+  transform: translateY(0.2em);
+  transition:
+    opacity 0.4s ease,
+    transform 0.5s ease;
+}
+
+body[data-mode="away"] .away-banner {
+  opacity: 1;
+  transform: none;
+}
+
+body[data-mode="away"] .photo-stage {
+  opacity: 0;
 }
 
 @media (max-width: 700px) {

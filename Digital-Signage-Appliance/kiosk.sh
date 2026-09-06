@@ -20,6 +20,15 @@ fi
 
 mkdir -p "$USER_DATA_DIR"
 
+i=0
+while [ "$i" -lt 20 ]; do
+  if command -v curl >/dev/null 2>&1 && curl --max-time 1 --fail --silent "$SIGNAGE_URL" >/dev/null; then
+    break
+  fi
+  i=$((i + 1))
+  sleep 1
+done
+
 while true; do
   "$browser" \
     --user-data-dir="$USER_DATA_DIR" \

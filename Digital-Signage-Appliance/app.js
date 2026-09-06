@@ -1,8 +1,12 @@
 const signage = document.querySelector(".signage");
+const photoStage = document.querySelector(".photo-stage");
+const photoImage = document.querySelector(".photo-stage img");
+const photoCaption = document.querySelector(".photo-caption");
 const params = new URLSearchParams(window.location.search);
 const staticMode = params.has("static");
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const LOOP_MS = 18000;
+const DEFAULT_PHOTO_HOLD_MS = 12000;
 const ORIGIN_DELAY_MS = {
   west: 0,
   north: 160,
@@ -15,6 +19,12 @@ const ORIGIN_STAGGER_MS = 90;
 if (staticMode) {
   document.body.dataset.static = "true";
 }
+
+let mode = params.has("away") ? "away" : "booth";
+let photos = [];
+let photoHoldMs = DEFAULT_PHOTO_HOLD_MS;
+let photoIndex = 0;
+let cycleTimer = 0;
 
 function pathEnd(path) {
   const length = path.getTotalLength();
@@ -79,12 +89,41 @@ function showStill() {
   signage.classList.add("is-still");
 }
 
+function hidePhoto() {
+  signage.classList.remove("is-photo");
+  if (photoStage) {
+    photoStage.setAttribute("aria-hidden", "true");
+  }
+}
+
+function showPhoto(photo) {
+  if (!photoImage || !photo) {
+    return;
+  }
+  photoImage.src = photo.src;
+  photoImage.alt = photo.caption || "";
+  if (photoCaption) {
+    photoCaption.textContent = photo.caption || "";
+  }
+  signage.classList.add("is-photo");
+  signage.classList.add("is-still");
+  if (photoStage) {
+    photoStage.removeAttribute("aria-hidden");
+  }
+}
+
+function later(fn, ms) {
+  window.clearTimeout(cycleTimer);
+  cycleTimer = window.setTimeout(fn, ms);
+}
+
 function restartEtch() {
   const paths = [...document.querySelectorAll(".trace-lines path")];
   const pads = [...document.querySelectorAll(".trace-pads circle")];
   const timing = { duration: LOOP_MS, easing: "linear", fill: "both" };
 
   cancelLoopAnimations([...paths, ...pads]);
+  signage.classList.remove("is-still");
   signage.classList.add("is-etching");
 
   paths.forEach((path) => {
@@ -106,23 +145,117 @@ function restartEtch() {
   });
 }
 
+function showNextPhoto() {
+  if (mode === "away") {
+    return;
+  }
+  if (photoIndex >= photos.length) {
+    runBrandCycle();
+    return;
+  }
+  showPhoto(photos[photoIndex]);
+  photoIndex += 1;
+  later(showNextPhoto, photoHoldMs);
+}
+
+function afterBrand() {
+  if (mode === "away") {
+    return;
+  }
+  if (!photos.length) {
+    runBrandCycle();
+    return;
+  }
+  photoIndex = 0;
+  showNextPhoto();
+}
+
+function runBrandCycle() {
+  hidePhoto();
+  if (mode === "away" || staticMode || reducedMotion) {
+    showStill();
+    return;
+  }
+  restartEtch();
+  later(afterBrand, LOOP_MS);
+}
+
+function applyMode(next) {
+  const normalized = next === "away" ? "away" : "booth";
+  mode = normalized;
+  document.body.dataset.mode = normalized;
+  if (normalized === "away") {
+    window.clearTimeout(cycleTimer);
+    hidePhoto();
+    showStill();
+    return;
+  }
+  if (!staticMode && !reducedMotion) {
+    runBrandCycle();
+  }
+}
+
+async function loadPhotos() {
+  try {
+    const response = await fetch("assets/photos/manifest.json", {
+      cache: "no-store",
+    });
+    if (!response.ok) {
+      return;
+    }
+    const manifest = await response.json();
+    const hold = Number(manifest.holdMs);
+    if (Number.isFinite(hold) && hold >= 3000) {
+      photoHoldMs = hold;
+    }
+    photos = (manifest.photos || [])
+      .filter((photo) => photo && photo.src)
+      .map((photo) => ({
+        src: photo.src.includes("/")
+          ? photo.src
+          : `assets/photos/${photo.src}`,
+        caption: photo.caption || "",
+      }));
+  } catch {
+    photos = [];
+  }
+}
+
+async function pollMode() {
+  try {
+    const response = await fetch("/api/mode", { cache: "no-store" });
+    if (!response.ok) {
+      return;
+    }
+    const payload = await response.json();
+    if (payload.mode && payload.mode !== mode) {
+      applyMode(payload.mode);
+    }
+  } catch {
+    // Local file preview and python -m http.server have no control API.
+  }
+}
+
 setupTraceLengths();
 signage.classList.add("is-traced");
+applyMode(mode);
 
 requestAnimationFrame(() => {
-  requestAnimationFrame(() => {
+  requestAnimationFrame(async () => {
     signage.classList.add("is-ready");
+    await loadPhotos();
     if (staticMode || reducedMotion) {
       showStill();
       return;
     }
-    restartEtch();
-    window.setInterval(restartEtch, LOOP_MS);
+    if (mode !== "away") {
+      runBrandCycle();
+    }
+    window.setInterval(pollMode, 2000);
   });
 });
 
 if (!staticMode && !reducedMotion) {
-
   const driftPositions = [
     [0, 0],
     [2, -1],

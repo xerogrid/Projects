@@ -161,6 +161,7 @@ class BusyBarControlTests(unittest.TestCase):
                 clear=True,
             ),
             mock.patch.object(busybar_control, "BusyBar", return_value=context) as factory,
+            mock.patch.object(busybar_control, "notify_signage_mode"),
             redirect_stdout(stdout),
         ):
             result = busybar_control.main(["signage"])
@@ -181,6 +182,64 @@ class BusyBarControlTests(unittest.TestCase):
         self.assertEqual(busybar_control.parse_brightness("75"), 75)
         with self.assertRaises(Exception):
             busybar_control.parse_brightness("101")
+
+    def test_away_payload_uses_amber_status(self) -> None:
+        payload = busybar_control.build_away_payload("Grab a coffee")
+        text = " ".join(
+            element.text
+            for element in payload.elements
+            if isinstance(element, types.TextElement)
+        )
+        self.assertIn("AWAY", text)
+        self.assertIn("GRAB A COFFEE", text)
+        self.assertEqual(payload.led_notification_color, "#FBBF24FF")
+        self.assertEqual(payload.priority, 70)
+
+    def test_dry_run_away_does_not_require_token(self) -> None:
+        stdout = io.StringIO()
+        with (
+            mock.patch.dict(os.environ, {}, clear=True),
+            redirect_stdout(stdout),
+        ):
+            result = busybar_control.main(["--dry-run", "away"])
+
+        self.assertEqual(result, 0)
+        self.assertIn("AWAY", stdout.getvalue())
+        self.assertIn("BACK SOON", stdout.getvalue())
+
+    def test_empty_button_event_is_ok_press(self) -> None:
+        events = busybar_control.extract_button_events(
+            {"updates": [{"input": {"button_event": {}}}]}
+        )
+        self.assertEqual(events, [("OK", "PRESS")])
+
+    def test_start_press_toggles_away(self) -> None:
+        state = {
+            "updates": [
+                {
+                    "input": {
+                        "button_event": {"button": "START", "action": "PRESS"},
+                    }
+                }
+            ]
+        }
+        self.assertTrue(busybar_control.is_away_toggle_press(state))
+        self.assertFalse(
+            busybar_control.is_away_toggle_press(
+                {"updates": [{"input": {"button_event": {"button": 2, "action": 1}}}]}
+            )
+        )
+
+    def test_dry_run_watch_names_start_button(self) -> None:
+        stdout = io.StringIO()
+        with (
+            mock.patch.dict(os.environ, {}, clear=True),
+            redirect_stdout(stdout),
+        ):
+            result = busybar_control.main(["--dry-run", "watch"])
+
+        self.assertEqual(result, 0)
+        self.assertIn("START", stdout.getvalue())
 
 
 if __name__ == "__main__":
