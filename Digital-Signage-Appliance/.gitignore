@@ -2,3 +2,8 @@
 __pycache__/
 *.py[cod]
 .env
+
+# Machine-specific provisioning files can contain network credentials.
+/network-config
+/user-data
+/*.nmconnection

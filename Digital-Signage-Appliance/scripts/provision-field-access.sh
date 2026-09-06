@@ -5,6 +5,7 @@ set -eu
 
 TARGET_USER="${SIGNAGE_USER:-signage}"
 TARGET_HOSTNAME="${SIGNAGE_HOSTNAME:-xerogrid-signage}"
+USB_SERVICE="xerogrid-usb-gadget-network.service"
 
 if [ "$(id -u)" -ne 0 ]; then
   echo "Run this script as root (for example: sudo $0)." >&2
@@ -54,15 +55,13 @@ if systemctl list-unit-files avahi-daemon.service --no-legend 2>/dev/null \
   systemctl enable --now avahi-daemon.service
 fi
 
-if command -v rpi-usb-gadget >/dev/null 2>&1; then
-  if ! rpi-usb-gadget on; then
-    echo "WARNING: rpi-usb-gadget could not be enabled automatically." >&2
-  fi
+if systemctl cat "$USB_SERVICE" >/dev/null 2>&1; then
+  systemctl enable --now "$USB_SERVICE"
 else
-  echo "WARNING: rpi-usb-gadget is not installed; USB SSH was not configured." >&2
+  echo "WARNING: $USB_SERVICE is not installed; USB networking was left unchanged." >&2
 fi
 
 echo "Field SSH access provisioned for $TARGET_USER@$TARGET_HOSTNAME.local."
 echo "Authorized key fingerprints:"
 ssh-keygen -lf "$AUTHORIZED_KEYS"
-echo "Reboot the Pi if USB gadget mode was newly enabled."
+echo "USB field address: 192.168.7.2 (managed by $USB_SERVICE when installed)."

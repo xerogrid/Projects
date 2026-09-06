@@ -5,7 +5,7 @@ set -u
 
 TARGET_USER="${SIGNAGE_USER:-signage}"
 PRIMARY_HOST="${SIGNAGE_HOST:-xerogrid-signage.local}"
-FALLBACK_HOST="${SIGNAGE_USB_IP:-10.12.194.1}"
+FALLBACK_HOST="${SIGNAGE_USB_IP:-192.168.7.2}"
 
 for host in "$PRIMARY_HOST" "$FALLBACK_HOST"; do
   echo "Trying $TARGET_USER@$host..." >&2
