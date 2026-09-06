@@ -14,6 +14,7 @@ if [ "${SIGNAGE_SKIP_FIELD_ACCESS:-0}" != "1" ]; then
 fi
 
 sudo mkdir -p "$PREFIX/bin" "$PREFIX/www" "$PREFIX/state"
+sudo chown "$(id -u):$(id -g)" "$PREFIX/state"
 
 sudo install -m 0755 "$ROOT/kiosk.sh" "$PREFIX/bin/kiosk.sh"
 sudo install -m 0755 "$ROOT/start-kiosk.sh" "$PREFIX/bin/start-kiosk.sh"
@@ -26,6 +27,7 @@ sudo install -m 0644 "$ROOT/requirements.txt" "$PREFIX/bin/requirements.txt"
 sudo rm -rf "$PREFIX/www"
 sudo mkdir -p "$PREFIX/www/assets/fonts" "$PREFIX/www/assets/photos"
 sudo install -m 0644 "$ROOT/index.html" "$ROOT/app.js" "$ROOT/minimal.css" "$PREFIX/www/"
+sudo install -m 0644 "$ROOT/assets/fbuilds.svg" "$PREFIX/www/assets/fbuilds.svg"
 sudo install -m 0644 "$ROOT/assets/fonts/"* "$PREFIX/www/assets/fonts/"
 if [ -e "$ROOT/assets/photos/manifest.json" ]; then
   sudo install -m 0644 "$ROOT/assets/photos/manifest.json" "$PREFIX/www/assets/photos/manifest.json"
