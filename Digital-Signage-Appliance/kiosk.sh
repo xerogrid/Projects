@@ -5,6 +5,11 @@ set -u
 SIGNAGE_URL="${SIGNAGE_URL:-http://127.0.0.1:4173}"
 USER_DATA_DIR="${KIOSK_USER_DATA_DIR:-$HOME/.config/chromium-signage}"
 
+case "$SIGNAGE_URL" in
+  *\?*) SIGNAGE_URL="${SIGNAGE_URL}&kiosk_start=$(date +%s)" ;;
+  *) SIGNAGE_URL="${SIGNAGE_URL}?kiosk_start=$(date +%s)" ;;
+esac
+
 pkill swayidle 2>/dev/null || true
 xset s off 2>/dev/null || true
 xset -dpms 2>/dev/null || true

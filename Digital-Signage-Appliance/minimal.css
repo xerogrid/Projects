@@ -365,7 +365,7 @@ body[data-mode="away"] .photo-stage {
   max-width: 68vw;
   margin: 0;
   color: #dfe3dc;
-  font-size: clamp(1.35rem, 2.3vmin, 2.2rem);
+  font-size: clamp(1.75rem, 3.5vmin, 3.4rem);
   font-weight: 700;
   line-height: 1.1;
   letter-spacing: 0.08em;
