@@ -36,6 +36,7 @@ while true; do
     --no-first-run \
     --no-default-browser-check \
     --noerrdialogs \
+    --password-store=basic \
     --disable-infobars \
     --disable-session-crashed-bubble \
     --disable-translate \

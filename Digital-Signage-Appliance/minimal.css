@@ -309,19 +309,79 @@ body[data-mode="away"] .photo-stage {
   opacity: 0;
 }
 
+.invite-message {
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.08em;
+  width: max-content;
+  max-width: 94vw;
+  margin: 0;
+  color: #dfe3dc;
+  font-family: "Oxanium", "Arial Black", Impact, sans-serif;
+  font-size: clamp(2.6rem, 6vw, 7.5rem);
+  font-weight: 700;
+  font-style: normal;
+  line-height: 0.9;
+  letter-spacing: 0.13em;
+  text-align: center;
+  text-transform: uppercase;
+  white-space: nowrap;
+  -webkit-text-stroke: 1px #edf1ea;
+  text-shadow:
+    0 2px 0 #5c685f,
+    0 5px 0 #111511;
+  opacity: 0;
+  transform: translate(-50%, calc(-50% - 0.3em));
+  transition:
+    opacity 0.7s ease 0.15s,
+    transform 0.9s cubic-bezier(0.2, 0.75, 0.25, 1) 0.15s;
+}
+
+.invite-message span:first-child {
+  letter-spacing: 0.1em;
+}
+
+.invite-message span:last-child {
+  color: #aeb9b0;
+  letter-spacing: 0.18em;
+}
+
+.is-ready .invite-message {
+  opacity: 1;
+  transform: translate(-50%, -50%);
+}
+
+.offer-line {
+  position: absolute;
+  z-index: 4;
+  left: 50%;
+  bottom: clamp(1.15rem, 3vh, 3rem);
+  width: max-content;
+  max-width: 68vw;
+  margin: 0;
+  color: #dfe3dc;
+  font-size: clamp(1.35rem, 2.3vmin, 2.2rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-shadow: 0 2px 0 #111511;
+  transform: translateX(-50%);
+}
+
 .invite {
   position: absolute;
   z-index: 4;
   right: clamp(0.85rem, 2vw, 1.5rem);
   bottom: clamp(0.85rem, 2vw, 1.5rem);
-  display: flex;
-  align-items: center;
-  gap: 0.95rem;
-  max-width: calc(100vw - 2 * clamp(0.85rem, 2vw, 1.5rem));
-  padding: 0.7rem 1.1rem 0.7rem 0.7rem;
+  padding: 0.7rem;
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 1.1rem;
-  color: #f7f9fc;
   background: rgba(7, 11, 18, 0.9);
   box-shadow: 0 1.1rem 2.8rem rgba(0, 0, 0, 0.45);
   backdrop-filter: blur(1.2rem);
@@ -330,27 +390,17 @@ body[data-mode="away"] .photo-stage {
 
 .invite img {
   display: block;
-  width: clamp(7.5rem, 16vmin, 13rem);
-  max-width: 40vw;
+  width: clamp(10rem, 20vmin, 20rem);
+  max-width: 32vw;
   height: auto;
-  flex: 0 0 auto;
   padding: 0.35rem;
   border-radius: 0.45rem;
   background: #fff;
 }
 
-.invite p {
-  min-width: 0;
-  margin: 0;
-  color: #f7f9fc;
-  font-size: clamp(1.05rem, 2.4vmin, 1.7rem);
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1.15;
-}
-
 @media (max-width: 700px) {
-  .brand {
+  .brand,
+  .invite-message {
     gap: 0.2em;
     font-size: clamp(2rem, 8vw, 4rem);
     letter-spacing: 0.06em;
@@ -360,21 +410,28 @@ body[data-mode="away"] .photo-stage {
     letter-spacing: 0.1em;
   }
 
+  .invite-message {
+    gap: 0.1em;
+    font-size: clamp(1.6rem, 6.4vw, 2.8rem);
+  }
+
+  .invite-message span:last-child {
+    letter-spacing: 0.1em;
+  }
+
+  .offer-line {
+    bottom: 8rem;
+    max-width: 92vw;
+    font-size: clamp(1rem, 4vw, 1.4rem);
+  }
+
   .invite {
-    left: clamp(0.85rem, 2vw, 1.5rem);
-    right: clamp(0.85rem, 2vw, 1.5rem);
-    max-width: none;
-    gap: 0.75rem;
-    padding: 0.6rem 0.75rem 0.6rem 0.6rem;
+    padding: 0.45rem;
   }
 
   .invite img {
-    width: 5.75rem;
+    width: 6.5rem;
     max-width: none;
-  }
-
-  .invite p {
-    font-size: 1.05rem;
   }
 }
 
