@@ -78,10 +78,12 @@ chmod +x install.sh
 ./install.sh
 ```
 
-`install.sh` copies files to `/opt/digital-signage`, creates the Python venv,
-provisions recoverable SSH-over-USB access, enables linger, and starts the
-units. See [Field SSH access](docs/field-access.md) for the 1Password keys,
-device inventory, and clean-laptop recovery procedure.
+`install.sh` copies files to `/opt/digital-signage`, provisions recoverable
+SSH-over-USB access, enables linger, and starts the core HTTP and kiosk units.
+It installs and starts the optional BUSY Bar integration when its Python
+dependency is available; an offline package index does not block the display.
+See [Field SSH access](docs/field-access.md) for the 1Password keys, device
+inventory, and clean-laptop recovery procedure.
 
 Confirm:
 

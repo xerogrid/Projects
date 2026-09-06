@@ -39,26 +39,52 @@ if [ -d "$ROOT/assets/photos" ]; then
   done
 fi
 
-if [ ! -x "$PREFIX/venv/bin/python" ]; then
-  sudo python3 -m venv "$PREFIX/venv"
-fi
-sudo "$PREFIX/venv/bin/python" -m pip install -r "$PREFIX/bin/requirements.txt"
-
 mkdir -p "$UNIT_DIR"
 install -m 0644 "$ROOT/packaging/signage-http.service" "$UNIT_DIR/signage-http.service"
 install -m 0644 "$ROOT/packaging/signage-kiosk.service" "$UNIT_DIR/signage-kiosk.service"
 install -m 0644 "$ROOT/packaging/signage-busybar.service" "$UNIT_DIR/signage-busybar.service"
 
-systemctl --user daemon-reload
-systemctl --user enable signage-http.service signage-busybar.service signage-kiosk.service
-systemctl --user restart signage-http.service signage-busybar.service
-systemctl --user restart signage-kiosk.service || true
-
 if command -v loginctl >/dev/null 2>&1; then
   sudo loginctl enable-linger "$(id -un)" || true
+fi
+
+systemctl --user daemon-reload
+systemctl --user enable signage-http.service signage-kiosk.service
+systemctl --user restart signage-http.service
+systemctl --user restart signage-kiosk.service || true
+
+busybar_ready=0
+if [ "${SIGNAGE_SKIP_BUSYBAR:-0}" = "1" ]; then
+  echo "Skipping optional BUSY Bar dependency installation."
+else
+  if [ ! -x "$PREFIX/venv/bin/python" ]; then
+    sudo python3 -m venv "$PREFIX/venv"
+  fi
+
+  if sudo "$PREFIX/venv/bin/python" -c 'import busylib' 2>/dev/null || \
+    sudo "$PREFIX/venv/bin/python" -m pip install \
+      --disable-pip-version-check \
+      --retries 1 \
+      --timeout 5 \
+      -r "$PREFIX/bin/requirements.txt"; then
+    busybar_ready=1
+  else
+    echo "WARNING: BUSY Bar dependencies are unavailable; core signage remains enabled." >&2
+  fi
+fi
+
+if [ "$busybar_ready" = "1" ]; then
+  systemctl --user enable signage-busybar.service
+  systemctl --user restart signage-busybar.service
+else
+  systemctl --user disable --now signage-busybar.service 2>/dev/null || true
 fi
 
 echo "Installed."
 echo "HTTP:   systemctl --user status signage-http.service"
 echo "Kiosk:  systemctl --user status signage-kiosk.service"
-echo "Bar:    systemctl --user status signage-busybar.service"
+if [ "$busybar_ready" = "1" ]; then
+  echo "Bar:    systemctl --user status signage-busybar.service"
+else
+  echo "Bar:    optional dependency unavailable; rerun install.sh when online"
+fi
